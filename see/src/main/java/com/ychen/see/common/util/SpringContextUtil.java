@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author yyy
  * @wx ychen5325
- * @email yangyouyuhd@163.com
+ * @email q1416349095@gmail.com
  */
 @Component
 public class SpringContextUtil implements ApplicationContextAware {

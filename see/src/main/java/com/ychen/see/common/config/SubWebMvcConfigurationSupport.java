@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 /**
  * @author yyy
  * @wx ychen5325
- * @email yangyouyuhd@163.com
+ * @email q1416349095@gmail.com
  */
 @Configuration
 public class SubWebMvcConfigurationSupport extends WebMvcConfigurationSupport {

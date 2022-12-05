@@ -3,7 +3,7 @@ package com.ychen.see.common;
 /**
  * @author yyy
  * @wx ychen5325
- * @email yangyouyuhd@163.com
+ * @email q1416349095@gmail.com
  */
 //
 // Source code recreated from a .class file by IntelliJ IDEA
