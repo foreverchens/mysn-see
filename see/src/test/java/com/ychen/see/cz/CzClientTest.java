@@ -3,12 +3,13 @@ package com.ychen.see.cz;
 import com.binance.client.model.market.Candlestick;
 import com.binance.client.model.market.CommonLongShortRatio;
 import com.binance.client.model.market.OpenInterestStat;
-import com.ychen.see.common.enums.IntervalEnum;
 import com.ychen.see.models.binance.CzClient;
+import com.ychen.see.models.binance.util.CzUtil;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,13 @@ public class CzClientTest {
         log.info("第一条数据时间:{}", DateTime.of(dataList3Day.get(0).getTimestamp()));
         log.info("最后一条数据时间:{}", DateTime.of(dataList3Day.get(dataList3Day.size() - 1).getTimestamp()));
         log.info("三天理论数据总数:{},实际数据总数:{}", (3 * 24 * 12), dataList3Day.size());
-        checkData(dataList3Day);
+        RuntimeException ex = null;
+        try {
+            CzUtil.dataTimeOrdered(dataList3Day);
+        } catch (RuntimeException e) {
+            ex = e;
+        }
+        Assert.assertNull(ex);
     }
 
     @Test
@@ -62,7 +69,13 @@ public class CzClientTest {
         log.info("第一条数据时间:{}", DateTime.of(dataList7Day.get(0).getTimestamp()));
         log.info("最后一条数据时间:{}", DateTime.of(dataList7Day.get(dataList7Day.size() - 1).getTimestamp()));
         log.info("七天理论数据总数:{},实际数据总数:{}", (7 * 24 * 12), dataList7Day.size());
-        checkData(dataList7Day);
+        RuntimeException ex = null;
+        try {
+            CzUtil.dataTimeOrdered(dataList7Day);
+        } catch (RuntimeException e) {
+            ex = e;
+        }
+        Assert.assertNull(ex);
     }
 
     @Test
@@ -75,9 +88,14 @@ public class CzClientTest {
         log.info("五分钟前时间:{}", DateTime.of(startTime));
         log.info("第一条数据时间:{}", DateTime.of(dataList3Day.get(0).getTimestamp()));
         log.info("五分钟理论数据总数:{},实际数据总数:{}", 1, dataList3Day.size());
-        checkData(dataList3Day);
+        RuntimeException ex = null;
+        try {
+            CzUtil.dataTimeOrdered(dataList3Day);
+        } catch (RuntimeException e) {
+            ex = e;
+        }
+        Assert.assertNull(ex);
     }
-
 
 
     @Test
@@ -90,12 +108,13 @@ public class CzClientTest {
         log.info("第一条数据时间:{}", DateTime.of(dataList3Day.get(0).getTimestamp()));
         log.info("三天理论数据总数:{},实际数据总数:{}", (3 * 24 * 12), dataList3Day.size());
         log.info("数据连续性检查。。。。");
-        for (int i = 0; i < dataList3Day.size() - 1; i++) {
-            if (dataList3Day.get(i + 1).getTimestamp() - dataList3Day.get(i).getTimestamp() != 1000 * 60 * 5) {
-                log.error("数据不连续！");
-            }
+        RuntimeException ex = null;
+        try {
+            CzUtil.dataTimeOrdered(dataList3Day);
+        } catch (RuntimeException e) {
+            ex = e;
         }
-        log.info("数据连续！");
+        Assert.assertNull(ex);
     }
 
     @Test
@@ -108,12 +127,13 @@ public class CzClientTest {
         log.info("第一条数据时间:{}", DateTime.of(dataList3Day.get(0).getTimestamp()));
         log.info("三天理论数据总数:{},实际数据总数:{}", (3 * 24 * 12), dataList3Day.size());
         log.info("数据连续性检查。。。。");
-        for (int i = 0; i < dataList3Day.size() - 1; i++) {
-            if (dataList3Day.get(i + 1).getTimestamp() - dataList3Day.get(i).getTimestamp() != 1000 * 60 * 5) {
-                log.error("数据不连续！");
-            }
+        RuntimeException ex = null;
+        try {
+            CzUtil.dataTimeOrdered(dataList3Day);
+        } catch (RuntimeException e) {
+            ex = e;
         }
-        log.info("数据连续！");
+        Assert.assertNull(ex);
     }
 
     @Test
@@ -127,6 +147,13 @@ public class CzClientTest {
         log.info("第一条数据时间:{}", DateTime.of(dataList7Day.get(0).getOpenTime()));
         log.info("最后一条数据时间:{}", DateTime.of(dataList7Day.get(dataList7Day.size() - 1).getOpenTime()));
         log.info("七天理论数据总数:{},实际数据总数:{}", (7 * 24 * 60), dataList7Day.size());
+        RuntimeException ex = null;
+        try {
+            CzUtil.klineDataTimeOrdered(dataList7Day);
+        } catch (RuntimeException e) {
+            ex = e;
+        }
+        Assert.assertNull(ex);
     }
 
     /**
@@ -139,7 +166,7 @@ public class CzClientTest {
         // 获取最近三天的数据、并检查连续性
         long startTime = DateUtil.offsetDay(new Date(), -3).getTime();
         List<OpenInterestStat> dataList3Day = CzClient.listOpenInterest(symbol, startTime, null);
-        checkData(dataList3Day);
+        CzUtil.dataTimeOrdered(dataList3Day);
         // 最小时间周期5分钟、测试11分钟
         int i = 3;
         while (i-- > 0) {
@@ -156,7 +183,7 @@ public class CzClientTest {
             OpenInterestStat data = dataList.get(dataList.size() - 1);
             log.info("新数据的时间:{}", DateTime.of(data.getTimestamp()));
             dataList3Day.add(data);
-            checkData(dataList3Day);
+            CzUtil.dataTimeOrdered(dataList3Day);
         }
     }
 
@@ -170,7 +197,7 @@ public class CzClientTest {
         // 获取最近三天的数据、并检查连续性
         long startTime = DateUtil.offsetDay(new Date(), -3).getTime();
         List<Candlestick> klineList = CzClient.listKline(symbol, startTime, null);
-        checkKLineData(klineList);
+        CzUtil.dataTimeOrdered(klineList);
         // 最小时间周期5分钟、测试11分钟
         int i = 10;
         while (i-- > 0) {
@@ -186,32 +213,9 @@ public class CzClientTest {
             log.info("data.size:{}", dataList.size());
             log.info("新数据的时间:{}", DateTime.of(dataList.get(dataList.size() - 1).getOpenTime()));
             klineList.addAll(dataList);
-            checkKLineData(klineList);
+            CzUtil.dataTimeOrdered(klineList);
         }
     }
-
-    private static void checkData(List<OpenInterestStat> dataList3Day) {
-        log.info("数据连续性检查。。。。");
-        for (int i = 0; i < dataList3Day.size() - 1; i++) {
-            if (dataList3Day.get(i + 1).getTimestamp() - dataList3Day.get(i).getTimestamp() != IntervalEnum.m5.time) {
-                log.error("数据不连续！");
-                return;
-            }
-        }
-        log.info("数据连续！");
-    }
-
-    private static void checkKLineData(List<Candlestick> dataList3Day) {
-        log.info("数据连续性检查。。。。");
-        for (int i = 0; i < dataList3Day.size() - 1; i++) {
-            if (dataList3Day.get(i + 1).getOpenTime() - dataList3Day.get(i).getOpenTime() != IntervalEnum.m1.time) {
-                log.error("数据不连续！");
-                return;
-            }
-        }
-        log.info("数据连续！");
-    }
-
 }
 
 
