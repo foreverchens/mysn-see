@@ -9,6 +9,7 @@ import com.binance.client.model.market.Candlestick;
 import com.binance.client.model.market.CommonLongShortRatio;
 import com.binance.client.model.market.ExchangeInfoEntry;
 import com.binance.client.model.market.OpenInterestStat;
+import com.ychen.see.common.enums.IntervalEnum;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -35,8 +36,8 @@ import java.util.stream.Collectors;
  */
 public class CzClient {
 
-    private static int maxLimit = 500;
-    private static int unit = 1000 * 60 * 5;
+    private static final int klineMaxLimit = 1500;
+    private static final int maxLimit = 500;
 
     private static final SyncRequestClient czClient = BinanceApiInternalFactory.getInstance().createSyncRequestClient("_", "_", new RequestOptions());
 
@@ -56,24 +57,26 @@ public class CzClient {
         if (Objects.isNull(endTime)) {
             endTime = DateTime.now().getTime();
         }
+        endTime = endTime / IntervalEnum.m5.time * IntervalEnum.m5.time + IntervalEnum.m5.time;
         if (Objects.isNull(startTime)) {
             // 不限制时间、一次查询
             return czClient.getOpenInterestStat(symbol, PeriodType._5m, null, endTime, maxLimit);
         }
-        int dataCount = (int) ((endTime - startTime) / unit);
+        startTime = startTime / IntervalEnum.m5.time * IntervalEnum.m5.time;
+        int dataCount = (int) ((endTime - startTime) / IntervalEnum.m5.time);
         if (dataCount < maxLimit) {
             // 时间范围内数据条数小于maxLimit 一次查询即可
-            return czClient.getOpenInterestStat(symbol, PeriodType._5m, startTime, endTime, maxLimit);
+            return czClient.getOpenInterestStat(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, endTime, maxLimit);
         }
 
         List<OpenInterestStat> rlt = new ArrayList<>(dataCount);
-        long tmpEndTime = startTime + maxLimit * unit;
+        long tmpEndTime = startTime + maxLimit * IntervalEnum.m5.time;
         while (tmpEndTime <= endTime) {
-            rlt.addAll(czClient.getOpenInterestStat(symbol, PeriodType._5m, startTime, tmpEndTime, maxLimit));
+            rlt.addAll(czClient.getOpenInterestStat(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, tmpEndTime, maxLimit));
             startTime = tmpEndTime;
-            tmpEndTime = tmpEndTime + maxLimit * unit;
+            tmpEndTime = tmpEndTime + maxLimit * IntervalEnum.m5.time;
         }
-        rlt.addAll(czClient.getOpenInterestStat(symbol, PeriodType._5m, startTime, endTime, maxLimit));
+        rlt.addAll(czClient.getOpenInterestStat(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, endTime, maxLimit));
         return rlt;
     }
 
@@ -88,24 +91,26 @@ public class CzClient {
         if (Objects.isNull(endTime)) {
             endTime = DateTime.now().getTime();
         }
+        endTime = endTime / IntervalEnum.m5.time * IntervalEnum.m5.time + IntervalEnum.m5.time;
         if (Objects.isNull(startTime)) {
             // 不限制时间、一次查询
             return czClient.getGlobalAccountRatio(symbol, PeriodType._5m, null, endTime, maxLimit);
         }
-        int dataCount = (int) ((endTime - startTime) / unit);
+        startTime = startTime / IntervalEnum.m5.time * IntervalEnum.m5.time;
+        int dataCount = (int) ((endTime - startTime) / IntervalEnum.m5.time);
         if (dataCount < maxLimit) {
             // 时间范围内数据条数小于maxLimit 一次查询即可
-            return czClient.getGlobalAccountRatio(symbol, PeriodType._5m, startTime, endTime, maxLimit);
+            return czClient.getGlobalAccountRatio(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, endTime, maxLimit);
         }
 
         List<CommonLongShortRatio> rlt = new ArrayList<>(dataCount);
-        long tmpEndTime = startTime + maxLimit * unit;
+        long tmpEndTime = startTime + maxLimit * IntervalEnum.m5.time;
         while (tmpEndTime <= endTime) {
-            rlt.addAll(czClient.getGlobalAccountRatio(symbol, PeriodType._5m, startTime, tmpEndTime, maxLimit));
+            rlt.addAll(czClient.getGlobalAccountRatio(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, tmpEndTime, maxLimit));
             startTime = tmpEndTime;
-            tmpEndTime = tmpEndTime + maxLimit * unit;
+            tmpEndTime = tmpEndTime + maxLimit * IntervalEnum.m5.time;
         }
-        rlt.addAll(czClient.getGlobalAccountRatio(symbol, PeriodType._5m, startTime, endTime, maxLimit));
+        rlt.addAll(czClient.getGlobalAccountRatio(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, endTime, maxLimit));
         return rlt;
     }
 
@@ -121,78 +126,58 @@ public class CzClient {
         if (Objects.isNull(endTime)) {
             endTime = DateTime.now().getTime();
         }
+        endTime = endTime / IntervalEnum.m5.time * IntervalEnum.m5.time + IntervalEnum.m5.time;
         if (Objects.isNull(startTime)) {
             // 不限制时间、一次查询
             return czClient.getTopTraderPositionRatio(symbol, PeriodType._5m, null, endTime, maxLimit);
         }
-        int dataCount = (int) ((endTime - startTime) / unit);
+        startTime = startTime / IntervalEnum.m5.time * IntervalEnum.m5.time;
+        int dataCount = (int) ((endTime - startTime) / IntervalEnum.m5.time);
         if (dataCount < maxLimit) {
             // 时间范围内数据条数小于maxLimit 一次查询即可
-            return czClient.getTopTraderPositionRatio(symbol, PeriodType._5m, startTime, endTime, maxLimit);
+            return czClient.getTopTraderPositionRatio(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, endTime, maxLimit);
         }
 
         List<CommonLongShortRatio> rlt = new ArrayList<>(dataCount);
-        long tmpEndTime = startTime + maxLimit * unit;
+        long tmpEndTime = startTime + maxLimit * IntervalEnum.m5.time;
         while (tmpEndTime <= endTime) {
-            rlt.addAll(czClient.getTopTraderPositionRatio(symbol, PeriodType._5m, startTime, tmpEndTime, maxLimit));
+            rlt.addAll(czClient.getTopTraderPositionRatio(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, tmpEndTime, maxLimit));
             startTime = tmpEndTime;
-            tmpEndTime = tmpEndTime + maxLimit * unit;
+            tmpEndTime = tmpEndTime + maxLimit * IntervalEnum.m5.time;
         }
-        rlt.addAll(czClient.getTopTraderPositionRatio(symbol, PeriodType._5m, startTime, endTime, maxLimit));
+        rlt.addAll(czClient.getTopTraderPositionRatio(symbol, PeriodType._5m, startTime + IntervalEnum.m5.time, endTime, maxLimit));
         return rlt;
     }
 
     /**
      * 获取价格列表
+     * 价格数据采用m1周期、便于震荡池
      * 默认值:500 最大值:1500.
      */
     public static List<Candlestick> listKline(String symbol, Long startTime, Long endTime) {
         if (Objects.isNull(endTime)) {
             endTime = DateTime.now().getTime();
         }
+        endTime = endTime / IntervalEnum.m1.time * IntervalEnum.m1.time + IntervalEnum.m1.time;
         if (Objects.isNull(startTime)) {
             // 不限制时间、一次查询
-            return czClient.getCandlestick(symbol, CandlestickInterval.FIVE_MINUTES, null, endTime, maxLimit);
+            return czClient.getCandlestick(symbol, CandlestickInterval.ONE_MINUTE, null, endTime, klineMaxLimit);
         }
-        int dataCount = (int) ((endTime - startTime) / unit);
-        if (dataCount < maxLimit) {
+        startTime = startTime / IntervalEnum.m1.time * IntervalEnum.m1.time;
+        int dataCount = (int) ((endTime - startTime) / IntervalEnum.m1.time);
+        if (dataCount < klineMaxLimit) {
             // 时间范围内数据条数小于maxLimit 一次查询即可
-            return czClient.getCandlestick(symbol, CandlestickInterval.FIVE_MINUTES, startTime, endTime, maxLimit);
+            return czClient.getCandlestick(symbol, CandlestickInterval.ONE_MINUTE, startTime + IntervalEnum.m1.time, endTime, klineMaxLimit);
         }
 
         List<Candlestick> rlt = new ArrayList<>(dataCount);
-        long tmpEndTime = startTime + maxLimit * unit;
+        long tmpEndTime = startTime + klineMaxLimit * IntervalEnum.m1.time;
         while (tmpEndTime <= endTime) {
-            rlt.addAll(czClient.getCandlestick(symbol, CandlestickInterval.FIVE_MINUTES, startTime, tmpEndTime, maxLimit));
+            rlt.addAll(czClient.getCandlestick(symbol, CandlestickInterval.ONE_MINUTE, startTime + IntervalEnum.m1.time, tmpEndTime, klineMaxLimit));
             startTime = tmpEndTime;
-            tmpEndTime = tmpEndTime + maxLimit * unit;
+            tmpEndTime = tmpEndTime + klineMaxLimit * IntervalEnum.m1.time;
         }
-        rlt.addAll(czClient.getCandlestick(symbol, CandlestickInterval.FIVE_MINUTES, startTime, endTime, maxLimit));
+        rlt.addAll(czClient.getCandlestick(symbol, CandlestickInterval.ONE_MINUTE, startTime + IntervalEnum.m1.time, endTime, klineMaxLimit));
         return rlt;
-    }
-
-    public static void main(String[] args) {
-//        listSymbol().forEach(System.out::println);
-//
-//        listAccRatio("AXSUSDT", null, null, 10).forEach(System.out::println);
-//
-        // 一个小时 12条、
-        Date curDate = new Date();
-        long startTime = DateUtil.offsetDay(new Date(), -3).getTime();
-        long endTime = curDate.getTime();
-        List<OpenInterestStat> data = listOpenInterest("AXSUSDT", startTime, endTime);
-        System.out.println("数据量:" + data.size());
-        System.out.println("查询初始时间：" + DateTime.of(data.get(0).getTimestamp()));
-        System.out.println("查询结束时间：" + DateTime.of(data.get(data.size() - 1).getTimestamp()));
-        List<DateTime> collect = data.stream().map(OpenInterestStat::getTimestamp).map(DateTime::of).collect(Collectors.toList());
-        for (int i = 0; i < collect.size() - 1; i++) {
-            if (collect.get(i + 1).getTime() - collect.get(i).getTime() != unit) {
-                System.out.println("数据异常");
-                return;
-            }
-        }
-        System.out.println("数据正常");
-//        listTopPositionRatio("AXSUSDT", null, null, 10).forEach(System.out::println);
-//        listKline("AXSUSDT", null, null, 10).forEach(System.out::println);
     }
 }

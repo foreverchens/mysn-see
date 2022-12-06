@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.ArrayDeque;
 
 /**
  * @author yyy
@@ -26,5 +26,5 @@ public class SymbolDataM {
     /**
      * 持仓量数据
      */
-    private List<OpenInterestStat> openInterestStatList;
+    private ArrayDeque<OpenInterestStat> openInterestStatList;
 }
