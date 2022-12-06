@@ -10,20 +10,20 @@ import java.util.List;
 /**
  * @author yyy
  * @wx ychen5325
- * @email yangyouyuhd@163.com
+ * @email q1416349095@gmail.com
  */
 @Slf4j
 public class CzUtil {
 
     public static void dataTimeOrdered(List dataList) {
-        checkOrdered(dataList, "timestamp",IntervalEnum.m5);
+        checkOrdered(dataList, "timestamp", IntervalEnum.m5);
     }
 
     public static void klineDataTimeOrdered(List dataList) {
-        checkOrdered(dataList, "openTime",IntervalEnum.m1);
+        checkOrdered(dataList, "openTime", IntervalEnum.m1);
     }
 
-    private static void checkOrdered(List dataList, String fieldName,IntervalEnum intervalEnum) {
+    private static void checkOrdered(List dataList, String fieldName, IntervalEnum intervalEnum) {
         Field timestamp = null;
         try {
             timestamp = dataList.get(0).getClass().getDeclaredField(fieldName);

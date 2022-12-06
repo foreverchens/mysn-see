@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author yyy
  * @wx ychen5325
- * @email yangyouyuhd@163.com
+ * @email q1416349095@gmail.com
  */
 public interface DataTypeConstant {
 

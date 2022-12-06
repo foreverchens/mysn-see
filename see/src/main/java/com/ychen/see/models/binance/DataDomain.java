@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author yyy
  * @wx ychen5325
- * @email yangyouyuhd@163.com
+ * @email q1416349095@gmail.com
  */
 @Slf4j
 @Component
@@ -102,7 +102,7 @@ public class DataDomain {
      */
     public <T> ContractDataTo<T> listLastContractData(String symbol, int day, String dataType) {
         int rltTotal = day * 24 * 12;
-        return listLastContractData(symbol,dataType, rltTotal);
+        return listLastContractData(symbol, dataType, rltTotal);
     }
 
     /**
