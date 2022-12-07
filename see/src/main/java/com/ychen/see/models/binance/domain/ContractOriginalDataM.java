@@ -1,7 +1,6 @@
-package com.ychen.see.models.binance.model;
+package com.ychen.see.models.binance.domain;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.Getter;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -14,9 +13,8 @@ import java.util.Objects;
  * @wx ychen5325
  * @email q1416349095@gmail.com
  */
-@Data
-@ToString
-public class ContractDataM {
+public class ContractOriginalDataM {
+    @Getter
     private String symbol;
 
     /**
@@ -27,7 +25,8 @@ public class ContractDataM {
      */
     private Map<String, ArrayDeque> map;
 
-    public ContractDataM(String symbol) {
+    public ContractOriginalDataM(String symbol) {
+        this.symbol = symbol;
         this.map = new HashMap<>();
     }
 

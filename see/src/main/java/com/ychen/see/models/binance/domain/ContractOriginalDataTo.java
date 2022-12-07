@@ -1,4 +1,4 @@
-package com.ychen.see.models.binance.model;
+package com.ychen.see.models.binance.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.util.List;
  * @email q1416349095@gmail.com
  */
 @AllArgsConstructor
-public class ContractDataTo<T> {
+public class ContractOriginalDataTo<T> {
 
     @Getter
     List<T> data;
