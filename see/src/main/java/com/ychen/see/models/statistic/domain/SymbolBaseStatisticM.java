@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -13,7 +12,6 @@ import java.math.BigDecimal;
  */
 @Data
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class SymbolBaseStatisticM {
@@ -39,4 +37,20 @@ public class SymbolBaseStatisticM {
 
 	private BigDecimal day15Amplitude;
 
+
+	@Override
+	public String toString() {
+		return "SymbolBaseStatisticM{" +
+				"symbol='" + symbol + '\'' +
+				", day3HighV=" + day3HighV +
+				", day3LowV=" + day3LowV +
+				", day3AvgV=" + day3AvgV +
+				", day7HighV=" + day7HighV +
+				", day7LowV=" + day7LowV +
+				", day7AvgV=" + day7AvgV +
+				", day3Amplitude=" + day3Amplitude +
+				", day7Amplitude=" + day7Amplitude +
+				", day15Amplitude=" + day15Amplitude +
+				'}';
+	}
 }
