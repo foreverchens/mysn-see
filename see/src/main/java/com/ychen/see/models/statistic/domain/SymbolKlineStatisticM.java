@@ -1,10 +1,10 @@
 package com.ychen.see.models.statistic.domain;
 
+import com.alibaba.fastjson.JSON;
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -12,11 +12,16 @@ import java.math.BigDecimal;
  * @author yyy
  */
 @Data
-@Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class SymbolKlineStatisticM extends SymbolBaseStatisticM {
 
 	private BigDecimal shakeVal;
+
+
+	@Override
+	public String toString() {
+		return JSON.toJSONString(this);
+	}
+
 }
