@@ -4,8 +4,8 @@ import com.binance.client.model.market.Candlestick;
 import com.binance.client.model.market.CommonLongShortRatio;
 import com.binance.client.model.market.OpenInterestStat;
 import com.ychen.see.models.binance.constant.DataTypeConstant;
-import com.ychen.see.models.binance.domain.ContractOriginalDataM;
-import com.ychen.see.models.binance.domain.ContractOriginalDataTo;
+import com.ychen.see.models.binance.domain.SymbolOriginalDataM;
+import com.ychen.see.models.binance.domain.SymbolOriginalDataTo;
 import com.ychen.see.models.binance.util.CzUtil;
 
 import cn.hutool.core.date.DateTime;
@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
-public class OriginalDataDomain {
+public class ContractOriginalDataDomain {
 
 	/**
 	 * 最多存储几天的数据
@@ -50,7 +50,7 @@ public class OriginalDataDomain {
 	/**
 	 * symbol -> symbolDataM
 	 */
-	private Map<String, ContractOriginalDataM> symbolAndDataMap;
+	private Map<String, SymbolOriginalDataM> symbolAndDataMap;
 
 	private Thread updateThread;
 
@@ -66,8 +66,8 @@ public class OriginalDataDomain {
 
 		symbolAndDataMap = new HashMap<>(symbolList.size());
 		for (String symbol : symbolList) {
-			ContractOriginalDataM contractOriginalDataM = new ContractOriginalDataM(symbol);
-			symbolAndDataMap.put(symbol, contractOriginalDataM);
+			SymbolOriginalDataM symbolOriginalDataM = new SymbolOriginalDataM(symbol);
+			symbolAndDataMap.put(symbol, symbolOriginalDataM);
 		}
 
 		// 初始数据填充
@@ -81,19 +81,19 @@ public class OriginalDataDomain {
 	private void initOpenInterestStatList() {
 		long startTime = DateUtil.offsetDay(new Date(), storeDay * -1).getTime();
 		for (String symbol : symbolAndDataMap.keySet()) {
-			ContractOriginalDataM contractOriginalDataM = symbolAndDataMap.get(symbol);
+			SymbolOriginalDataM symbolOriginalDataM = symbolAndDataMap.get(symbol);
 			// 初始化持仓量数据。。。
 			List<OpenInterestStat> openInterestStatList = CzClient.listOpenInterest(symbol, startTime, null);
-			contractOriginalDataM.fill(DataTypeConstant.openInterest, openInterestStatList);
+			symbolOriginalDataM.fill(DataTypeConstant.openInterest, openInterestStatList);
 			// 初始化大户持仓量多空比数据
 			List<CommonLongShortRatio> topPositionRatioList = CzClient.listTopPositionRatio(symbol, startTime, null);
-			contractOriginalDataM.fill(DataTypeConstant.topPositionRatio, topPositionRatioList);
+			symbolOriginalDataM.fill(DataTypeConstant.topPositionRatio, topPositionRatioList);
 			// 初始化k线数据。。。
 			List<Candlestick> klineList = CzClient.listKline(symbol, startTime, null);
-			contractOriginalDataM.fill(DataTypeConstant.kline, klineList);
+			symbolOriginalDataM.fill(DataTypeConstant.kline, klineList);
 			// 初始化账户多空比数据
 			List<CommonLongShortRatio> accRatioList = CzClient.listAccRatio(symbol, startTime, null);
-			contractOriginalDataM.fill(DataTypeConstant.accRatio, accRatioList);
+			symbolOriginalDataM.fill(DataTypeConstant.accRatio, accRatioList);
 		}
 	}
 
@@ -101,17 +101,17 @@ public class OriginalDataDomain {
 	 * 获取最近n天数据
 	 * 持仓量、多空比数据都是5分钟一条、使用该方法
 	 */
-	public <T> ContractOriginalDataTo<T> listLastContractData(String symbol, int day, String dataType) {
+	public <T> SymbolOriginalDataTo<T> listLastContractData(String symbol, int day, String dataType) {
 		int rltTotal = day * 24 * 12;
 		if (StringUtils.equals(DataTypeConstant.kline, dataType)) {
 			// kline 最小周期为1min
 			rltTotal *= 5;
 		}
-		ContractOriginalDataM contractOriginalDataM = symbolAndDataMap.get(symbol);
-		ArrayDeque<T> dataQueue = contractOriginalDataM.<T>get(dataType);
+		SymbolOriginalDataM symbolOriginalDataM = symbolAndDataMap.get(symbol);
+		ArrayDeque<T> dataQueue = symbolOriginalDataM.<T>get(dataType);
 		if (dataQueue.size() == rltTotal) {
 			// 你想要全部
-			return new ContractOriginalDataTo<>(new ArrayList<>(dataQueue));
+			return new SymbolOriginalDataTo<>(new ArrayList<>(dataQueue));
 		}
 		List<T> rlt = new ArrayList<>(rltTotal);
 		Iterator<T> iterator = dataQueue.descendingIterator();
@@ -122,7 +122,7 @@ public class OriginalDataDomain {
 			}
 		}
 		Collections.reverse(rlt);
-		return new ContractOriginalDataTo<>(rlt);
+		return new SymbolOriginalDataTo<>(rlt);
 	}
 
 	private final class UpdateTask implements Runnable {
@@ -141,15 +141,15 @@ public class OriginalDataDomain {
 				try {
 					log.info("update start ......");
 					for (String symbol : symbolAndDataMap.keySet()) {
-						ContractOriginalDataM contractOriginalDataM = symbolAndDataMap.get(symbol);
+						SymbolOriginalDataM symbolOriginalDataM = symbolAndDataMap.get(symbol);
 						// 更新持仓量数据
-						updateOpenInterestStatData(symbol, contractOriginalDataM);
+						updateOpenInterestStatData(symbol, symbolOriginalDataM);
 						// 更新账户多空比数据
-						updateAccRatioData(symbol, contractOriginalDataM);
+						updateAccRatioData(symbol, symbolOriginalDataM);
 						// 更新大户持仓量数据
-						updateTopPositionRatioData(symbol, contractOriginalDataM);
+						updateTopPositionRatioData(symbol, symbolOriginalDataM);
 						// 更新kline数据
-						updateKlineData(symbol, contractOriginalDataM);
+						updateKlineData(symbol, symbolOriginalDataM);
 					}
 					log.info("update end ......");
 					TimeUnit.MINUTES.sleep(5);
@@ -160,8 +160,8 @@ public class OriginalDataDomain {
 		}
 
 
-		private void updateOpenInterestStatData(String symbol, ContractOriginalDataM contractOriginalDataM) {
-			ArrayDeque<OpenInterestStat> dataQueue = contractOriginalDataM.get(DataTypeConstant.openInterest);
+		private void updateOpenInterestStatData(String symbol, SymbolOriginalDataM symbolOriginalDataM) {
+			ArrayDeque<OpenInterestStat> dataQueue = symbolOriginalDataM.get(DataTypeConstant.openInterest);
 			OpenInterestStat first = dataQueue.peekLast();
 			List<OpenInterestStat> openInterestStatList = CzClient.listOpenInterest(symbol, first.getTimestamp(),
 					null);
@@ -179,8 +179,8 @@ public class OriginalDataDomain {
 					DateTime.of(dataQueue.peekLast().getTimestamp()));
 		}
 
-		private void updateAccRatioData(String symbol, ContractOriginalDataM contractOriginalDataM) {
-			ArrayDeque<CommonLongShortRatio> dataQueue = contractOriginalDataM.get(DataTypeConstant.accRatio);
+		private void updateAccRatioData(String symbol, SymbolOriginalDataM symbolOriginalDataM) {
+			ArrayDeque<CommonLongShortRatio> dataQueue = symbolOriginalDataM.get(DataTypeConstant.accRatio);
 			CommonLongShortRatio first = dataQueue.peekLast();
 			List<CommonLongShortRatio> accRatioList = CzClient.listAccRatio(symbol, first.getTimestamp(), null);
 			log.info("{} 开始更新账户多空比数据,新到数据{}条", symbol, accRatioList.size());
@@ -197,8 +197,8 @@ public class OriginalDataDomain {
 					DateTime.of(dataQueue.peekLast().getTimestamp()));
 		}
 
-		private void updateTopPositionRatioData(String symbol, ContractOriginalDataM contractOriginalDataM) {
-			ArrayDeque<CommonLongShortRatio> dataQueue = contractOriginalDataM.get(DataTypeConstant.topPositionRatio);
+		private void updateTopPositionRatioData(String symbol, SymbolOriginalDataM symbolOriginalDataM) {
+			ArrayDeque<CommonLongShortRatio> dataQueue = symbolOriginalDataM.get(DataTypeConstant.topPositionRatio);
 			CommonLongShortRatio first = dataQueue.peekLast();
 			List<CommonLongShortRatio> accRatioList = CzClient.listTopPositionRatio(symbol, first.getTimestamp(),
 					null);
@@ -216,8 +216,8 @@ public class OriginalDataDomain {
 					DateTime.of(dataQueue.peekLast().getTimestamp()));
 		}
 
-		private void updateKlineData(String symbol, ContractOriginalDataM contractOriginalDataM) {
-			ArrayDeque<Candlestick> dataQueue = contractOriginalDataM.get(DataTypeConstant.kline);
+		private void updateKlineData(String symbol, SymbolOriginalDataM symbolOriginalDataM) {
+			ArrayDeque<Candlestick> dataQueue = symbolOriginalDataM.get(DataTypeConstant.kline);
 			Candlestick first = dataQueue.peekLast();
 			List<Candlestick> accRatioList = CzClient.listKline(symbol, first.getOpenTime(), null);
 			log.info("{} 开始更新kline数据,新到数据{}条", symbol, accRatioList.size());

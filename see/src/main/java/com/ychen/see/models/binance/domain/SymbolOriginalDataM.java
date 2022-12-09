@@ -13,7 +13,7 @@ import java.util.Objects;
  * @wx ychen5325
  * @email q1416349095@gmail.com
  */
-public class ContractOriginalDataM {
+public class SymbolOriginalDataM {
     @Getter
     private String symbol;
 
@@ -25,7 +25,7 @@ public class ContractOriginalDataM {
      */
     private Map<String, ArrayDeque> map;
 
-    public ContractOriginalDataM(String symbol) {
+    public SymbolOriginalDataM(String symbol) {
         this.symbol = symbol;
         this.map = new HashMap<>();
     }

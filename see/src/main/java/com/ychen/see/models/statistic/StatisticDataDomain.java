@@ -1,6 +1,6 @@
 package com.ychen.see.models.statistic;
 
-import com.ychen.see.models.binance.OriginalDataDomain;
+import com.ychen.see.models.binance.ContractOriginalDataDomain;
 import com.ychen.see.models.statistic.domain.ContractStatisticDataM;
 
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class StatisticDataDomain {
 
 	@Resource
-	private OriginalDataDomain originalDataDomain;
+	private ContractOriginalDataDomain contractOriginalDataDomain;
 
 	private Map<String, ContractStatisticDataM> map;
 

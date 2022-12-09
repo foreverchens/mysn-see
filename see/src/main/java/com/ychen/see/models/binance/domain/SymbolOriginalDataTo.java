@@ -11,7 +11,7 @@ import java.util.List;
  * @email q1416349095@gmail.com
  */
 @AllArgsConstructor
-public class ContractOriginalDataTo<T> {
+public class SymbolOriginalDataTo<T> {
 
     @Getter
     List<T> data;

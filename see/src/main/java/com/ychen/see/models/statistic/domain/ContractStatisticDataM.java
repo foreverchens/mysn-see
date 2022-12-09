@@ -17,20 +17,20 @@ public class ContractStatisticDataM {
 	@Getter
 	private String symbol;
 
-	private Map<String, BaseStatisticM> map;
+	private Map<String, SymbolBaseStatisticM> map;
 
 	public ContractStatisticDataM(String symbol) {
 		this.symbol = symbol;
 		this.map = new HashMap<>();
-		this.map =MapUtil.<String, BaseStatisticM>builder()
-					   .put(DataTypeConstant.accRatio, new BaseStatisticM())
-					   .put(DataTypeConstant.topPositionRatio, new BaseStatisticM())
-					   .put(DataTypeConstant.openInterest, new OpenPositionStatisticM())
-					   .put(DataTypeConstant.kline, new KlineStatisticM())
+		this.map =MapUtil.<String, SymbolBaseStatisticM>builder()
+					   .put(DataTypeConstant.accRatio, new SymbolBaseStatisticM())
+					   .put(DataTypeConstant.topPositionRatio, new SymbolBaseStatisticM())
+					   .put(DataTypeConstant.openInterest, new SymbolOpenPositionStatisticM())
+					   .put(DataTypeConstant.kline, new SymbolKlineStatisticM())
 						 .build();
 	}
 
-	public BaseStatisticM get(String dataType) {
+	public SymbolBaseStatisticM get(String dataType) {
 		return map.get(dataType);
 	}
 }

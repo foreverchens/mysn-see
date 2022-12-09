@@ -16,23 +16,7 @@ import java.math.BigDecimal;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class BaseStatisticM {
+public class SymbolKlineStatisticM extends SymbolBaseStatisticM {
 
-	private String symbol;
-
-	private BigDecimal amplitude;
-
-	private BigDecimal day3HighV;
-
-	private BigDecimal day3LowV;
-
-	private BigDecimal day3AvgV;
-
-	private BigDecimal day7HighV;
-
-	private BigDecimal day7LowV;
-
-	private BigDecimal day7AvgV;
-
-
+	private BigDecimal shakeVal;
 }
