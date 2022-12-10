@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author yyy
@@ -46,14 +47,21 @@ public class StatisticDataDomain {
 	/**
 	 * 针对一个类型的所有币对的数据进行分析
 	 */
-	public void statistic(String dataType) {
-		for (String symbol : symbolList) {
-			ContractStatisticDataM statisticDataM = symbolAndStatisticMap.get(symbol);
-			statisticFuncMap.get(dataType).doStatistic(dataType, statisticDataM, contractOriginalDataDomain);
+	public void statistic(String symbol, String dataType) {
+		ContractStatisticDataM statisticDataM = symbolAndStatisticMap.get(symbol);
+		ContractDataStatisticFunc statisticFunc =
+				statisticFuncMap.get(ContractDataStatisticFunc.beanPrefix + dataType);
+		if (Objects.isNull(statisticFunc)) {
+			return;
 		}
+		statisticFunc.doStatistic(dataType, statisticDataM, contractOriginalDataDomain);
 	}
 
 	public SymbolBaseStatisticM getStatisticInfo(String symbol, String dataType) {
-		return symbolAndStatisticMap.get(symbol).get(dataType);
+		ContractStatisticDataM statisticDataM = symbolAndStatisticMap.get(symbol);
+		if (Objects.isNull(statisticDataM)) {
+			return null;
+		}
+		return statisticDataM.get(dataType);
 	}
 }

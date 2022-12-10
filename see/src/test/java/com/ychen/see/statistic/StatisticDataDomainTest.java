@@ -38,7 +38,7 @@ public class StatisticDataDomainTest {
 
 	@Test
 	public void test() {
-		statisticDataDomain.statistic(DataTypeConstant.openInterest);
+		statisticDataDomain.statistic("AXSUSDT",DataTypeConstant.openInterest);
 		SymbolBaseStatisticM statisticM = statisticDataDomain.getStatisticInfo("AXSUSDT",
 				DataTypeConstant.openInterest);
 		System.out.println(statisticM);

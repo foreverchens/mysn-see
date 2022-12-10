@@ -5,6 +5,7 @@ package com.ychen.see.models.statistic.func.impl;/**
 import com.binance.client.model.market.CommonLongShortRatio;
 import com.ychen.see.common.CallResult;
 import com.ychen.see.models.binance.ContractOriginalDataDomain;
+import com.ychen.see.models.binance.constant.DataTypeConstant;
 import com.ychen.see.models.statistic.domain.ContractStatisticDataM;
 import com.ychen.see.models.statistic.domain.SymbolKlineStatisticM;
 import com.ychen.see.models.statistic.func.ContractDataStatisticFunc;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  * {@code @date} 2022/12/9 17:35
  */
 @Slf4j
-@Component
+@Component(ContractDataStatisticFunc.beanPrefix+ DataTypeConstant.kline)
 public class ContractKlineStatisticFuncImpl implements ContractDataStatisticFunc {
 	@Override
 	public CallResult<String> doStatistic(String dataType, ContractStatisticDataM statisticDataM,

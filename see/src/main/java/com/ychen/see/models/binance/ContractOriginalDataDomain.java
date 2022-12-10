@@ -3,10 +3,12 @@ package com.ychen.see.models.binance;
 import com.binance.client.model.market.Candlestick;
 import com.binance.client.model.market.CommonLongShortRatio;
 import com.binance.client.model.market.OpenInterestStat;
+import com.ychen.see.common.config.SwitchConfig;
 import com.ychen.see.models.binance.constant.DataTypeConstant;
 import com.ychen.see.models.binance.domain.SymbolOriginalDataTo;
 import com.ychen.see.models.binance.util.CzUtil;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 
@@ -18,10 +20,11 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
+import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,6 +67,9 @@ public class ContractOriginalDataDomain {
 	 */
 	private Map<String, ArrayDeque> symbolAndTopOpenPosRatioMap;
 
+	@Resource
+	private SwitchConfig switchConfig;
+
 	/*-----------------初始化函数-----------------*/
 
 	@PostConstruct
@@ -73,7 +79,7 @@ public class ContractOriginalDataDomain {
 		symbolList = CzClient.listSymbol();
 		log.info("[init] symbolList.size = {}", symbolList.size());
 		// todo 测试用
-		symbolList = Arrays.asList("AXSUSDT", "BTCUSDT");
+//		symbolList = Arrays.asList("AXSUSDT", "BTCUSDT");
 
 		symbolAndOpenPositionMap = new HashMap<>(symbolList.size());
 		symbolAndKlineMap = new HashMap<>(symbolList.size());
@@ -87,18 +93,28 @@ public class ContractOriginalDataDomain {
 	private void initOpenInterestStatList() {
 		long startTime = DateUtil.offsetDay(new Date(), storeDay * -1).getTime();
 		for (String symbol : symbolList) {
-			// 初始化持仓量数据。。。
-			List<OpenInterestStat> openInterestStatList = CzClient.listOpenInterest(symbol, startTime, null);
-			symbolAndOpenPositionMap.put(symbol, new ArrayDeque<>(openInterestStatList));
-			// 初始化大户持仓量多空比数据
-			List<CommonLongShortRatio> topPositionRatioList = CzClient.listTopPositionRatio(symbol, startTime, null);
-			symbolAndTopOpenPosRatioMap.put(symbol, new ArrayDeque<>(topPositionRatioList));
-			// 初始化k线数据。。。
-			List<Candlestick> klineList = CzClient.listKline(symbol, startTime, null);
-			symbolAndKlineMap.put(symbol, new ArrayDeque<>(klineList));
-			// 初始化账户多空比数据
-			List<CommonLongShortRatio> accRatioList = CzClient.listAccRatio(symbol, startTime, null);
-			symbolAndAccRatioMap.put(symbol, new ArrayDeque<>(accRatioList));
+			log.info("[init] {} 源数据初始化中....", symbol);
+			if (switchConfig.getOpenPos()) {
+				// 初始化持仓量数据。。。
+				List<OpenInterestStat> openInterestStatList = CzClient.listOpenInterest(symbol, startTime, null);
+				symbolAndOpenPositionMap.put(symbol, new ArrayDeque<>(openInterestStatList));
+			}
+			if (switchConfig.getTopPosRatio()) {
+				// 初始化大户持仓量多空比数据
+				List<CommonLongShortRatio> topPositionRatioList = CzClient.listTopPositionRatio(symbol, startTime,
+						null);
+				symbolAndTopOpenPosRatioMap.put(symbol, new ArrayDeque<>(topPositionRatioList));
+			}
+			if (switchConfig.getKline()) {
+				// 初始化k线数据。。。
+				List<Candlestick> klineList = CzClient.listKline(symbol, startTime, null);
+				symbolAndKlineMap.put(symbol, new ArrayDeque<>(klineList));
+			}
+			if (switchConfig.getAccRatio()) {
+				// 初始化账户多空比数据
+				List<CommonLongShortRatio> accRatioList = CzClient.listAccRatio(symbol, startTime, null);
+				symbolAndAccRatioMap.put(symbol, new ArrayDeque<>(accRatioList));
+			}
 		}
 	}
 
@@ -137,17 +153,38 @@ public class ContractOriginalDataDomain {
 
 	public void updateContractDataSource(String symbol, String dataType) {
 		if (StringUtils.equals(dataType, DataTypeConstant.openInterest)) {
-			updateOpenInterestStatData(symbol);
+			if (switchConfig.getOpenPos()) {
+				updateOpenInterestStatData(symbol);
+			}
 		} else if (StringUtils.equals(dataType, DataTypeConstant.kline)) {
-			updateKlineData(symbol);
+			if (switchConfig.getKline()) {
+				updateKlineData(symbol);
+			}
 		} else if (StringUtils.equals(dataType, DataTypeConstant.accRatio)) {
-			updateAccRatioData(symbol);
+			if (switchConfig.getAccRatio()) {
+				updateAccRatioData(symbol);
+			}
 		} else if (StringUtils.equals(dataType, DataTypeConstant.topPositionRatio)) {
-			updateTopPositionRatioData(symbol);
+			if (switchConfig.getTopPosRatio()) {
+				updateTopPositionRatioData(symbol);
+			}
 		}
 	}
 
-
+	public BigDecimal getCurVal(String symbol, String dataType) {
+		if (!DataTypeConstant.typeList.contains(dataType)) {
+			throw new RuntimeException("dataType illegal");
+		}
+		ArrayDeque<Object> deque = get(symbol, dataType);
+		Object last = deque.getLast();
+		if (last instanceof OpenInterestStat) {
+			return ((OpenInterestStat) last).getSumOpenInterestValue();
+		} else if (last instanceof CommonLongShortRatio) {
+			return ((CommonLongShortRatio) last).getLongShortRatio();
+		} else {
+			return ((Candlestick) last).getOpen();
+		}
+	}
 
 	/*-----------------私有函数-----------------*/
 
@@ -186,6 +223,10 @@ public class ContractOriginalDataDomain {
 		ArrayDeque<OpenInterestStat> dataQueue = symbolAndOpenPositionMap.get(symbol);
 		OpenInterestStat first = dataQueue.peekLast();
 		List<OpenInterestStat> openInterestStatList = CzClient.listOpenInterest(symbol, first.getTimestamp(), null);
+		if (CollectionUtil.isEmpty(openInterestStatList)) {
+			log.info("{}-{}无更新数据。。。。", symbol, DataTypeConstant.openInterest);
+			return;
+		}
 		log.info("{} 开始更新持仓量数据,新到数据{}条", symbol, openInterestStatList.size());
 		log.info("{} 更新前持仓量数据范围: {} -> {}", symbol, DateTime.of(dataQueue.peekFirst().getTimestamp()),
 				DateTime.of(dataQueue.peekLast().getTimestamp()));
@@ -204,6 +245,10 @@ public class ContractOriginalDataDomain {
 		ArrayDeque<CommonLongShortRatio> dataQueue = symbolAndAccRatioMap.get(symbol);
 		CommonLongShortRatio first = dataQueue.peekLast();
 		List<CommonLongShortRatio> accRatioList = CzClient.listAccRatio(symbol, first.getTimestamp(), null);
+		if (CollectionUtil.isEmpty(accRatioList)) {
+			log.info("{}-{}无更新数据。。。。", symbol, DataTypeConstant.accRatio);
+			return;
+		}
 		log.info("{} 开始更新账户多空比数据,新到数据{}条", symbol, accRatioList.size());
 		log.info("{} 更新前账户多空比数据范围: {} -> {}", symbol, DateTime.of(dataQueue.peekFirst().getTimestamp()),
 				DateTime.of(dataQueue.peekLast().getTimestamp()));
@@ -222,6 +267,10 @@ public class ContractOriginalDataDomain {
 		ArrayDeque<CommonLongShortRatio> dataQueue = symbolAndTopOpenPosRatioMap.get(symbol);
 		CommonLongShortRatio first = dataQueue.peekLast();
 		List<CommonLongShortRatio> accRatioList = CzClient.listTopPositionRatio(symbol, first.getTimestamp(), null);
+		if (CollectionUtil.isEmpty(accRatioList)) {
+			log.info("{}-{}无更新数据。。。。", symbol, DataTypeConstant.topPositionRatio);
+			return;
+		}
 		log.info("{} 开始更新大户持仓量多空比数据,新到数据{}条", symbol, accRatioList.size());
 		log.info("{} 更新前持仓量多空比数据范围: {} -> {}", symbol, DateTime.of(dataQueue.peekFirst().getTimestamp()),
 				DateTime.of(dataQueue.peekLast().getTimestamp()));
@@ -240,6 +289,10 @@ public class ContractOriginalDataDomain {
 		ArrayDeque<Candlestick> dataQueue = symbolAndKlineMap.get(symbol);
 		Candlestick first = dataQueue.peekLast();
 		List<Candlestick> accRatioList = CzClient.listKline(symbol, first.getOpenTime(), null);
+		if (CollectionUtil.isEmpty(accRatioList)) {
+			log.info("{}-{}无更新数据。。。。", symbol, DataTypeConstant.kline);
+			return;
+		}
 		log.info("{} 开始更新kline数据,新到数据{}条", symbol, accRatioList.size());
 		log.info("{} 更新前kline数据范围: {} -> {}", symbol, DateTime.of(dataQueue.peekFirst().getOpenTime()),
 				DateTime.of(dataQueue.peekLast().getOpenTime()));
@@ -254,4 +307,5 @@ public class ContractOriginalDataDomain {
 				DateTime.of(dataQueue.peekLast().getOpenTime()));
 
 	}
+
 }

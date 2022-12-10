@@ -19,6 +19,7 @@ import java.util.List;
 @FunctionalInterface
 public interface ContractDataStatisticFunc {
 
+	String beanPrefix = "statistic-";
 
 	/**
 	 * 统计一个类型的数据、如持仓量数据
