@@ -6,6 +6,8 @@ import com.ychen.see.models.event.constant.EventConstant;
 import com.ychen.see.models.event.domain.ChangeEventInfo;
 import com.ychen.see.models.event.func.ChangeEventFunc;
 
+import cn.hutool.core.date.DateUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,6 +54,7 @@ public class OpenPosChangeEventConfiguration {
 								  .dataType(dataType)
 								  .period(period)
 								  .location(location)
+								  .eventTime(DateUtil.formatDateTime(new Date()))
 								  .build();
 		};
 	}

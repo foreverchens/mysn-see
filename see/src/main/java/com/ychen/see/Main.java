@@ -1,8 +1,5 @@
 package com.ychen.see;
 
-import com.ychen.see.common.util.SpringContextUtil;
-import com.ychen.see.models.schedule.TaskManage;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
