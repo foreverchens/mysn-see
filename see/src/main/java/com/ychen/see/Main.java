@@ -18,7 +18,5 @@ public class Main {
 	public static void main(String[] args) {
 		SpringApplication.run(Main.class, args);
 		log.info("-----------------MySN-SEE SUC-----------------");
-		TaskManage bean = SpringContextUtil.getBean(TaskManage.class);
-		bean.contractDataAnalyze();
 	}
 }

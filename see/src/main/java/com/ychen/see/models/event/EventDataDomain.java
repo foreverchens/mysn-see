@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
@@ -49,8 +48,7 @@ public class EventDataDomain {
 	@Resource
 	private ContractOriginalDataDomain originalDataDomain;
 
-	@PostConstruct
-	private void init() {
+	public EventDataDomain() {
 		dataTypeAndEventListMap = new HashMap<>();
 		dataTypeAndEventListMap.put(DataTypeConstant.openInterest, OpenPosChangeEventConfiguration.listOpenPosEvent());
 		dataTypeAndEventListMap.put(DataTypeConstant.kline, KlineChangeEventConfiguration.listKlineEvent());

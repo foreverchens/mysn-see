@@ -19,9 +19,9 @@ import java.util.Map;
  */
 public class StatisticDataDomainTest {
 
-	ContractOriginalDataDomainTest contractOriginalDataDomainTest = new ContractOriginalDataDomainTest();
+	public ContractOriginalDataDomainTest contractOriginalDataDomainTest = new ContractOriginalDataDomainTest();
 
-	StatisticDataDomain statisticDataDomain;
+	public StatisticDataDomain statisticDataDomain;
 
 	@Before
 	public void before() throws Exception {

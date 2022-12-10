@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class ContractOriginalDataDomain {
 		symbolList = CzClient.listSymbol();
 		log.info("[init] symbolList.size = {}", symbolList.size());
 		// todo 测试用
-//		symbolList = Arrays.asList("AXSUSDT", "BTCUSDT");
+		symbolList = Arrays.asList("AXSUSDT", "BTCUSDT");
 
 		symbolAndOpenPositionMap = new HashMap<>(symbolList.size());
 		symbolAndKlineMap = new HashMap<>(symbolList.size());
