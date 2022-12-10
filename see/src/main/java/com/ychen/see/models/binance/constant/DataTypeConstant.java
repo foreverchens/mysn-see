@@ -7,15 +7,14 @@ import java.util.List;
  * 合约数据类型常量
  *
  * @author yyy
- * @wx ychen5325
- * @email q1416349095@gmail.com
  */
 public interface DataTypeConstant {
 
-    String openInterest = "0";
-    String accRatio = "1";
-    String topPositionRatio = "2";
-    String kline = "3";
+	String openInterest = "持仓量";
+	String accRatio = "账户数多空比";
+	String topPositionRatio = "大户持仓量多空比";
 
-    List<String> typeList = Arrays.asList(openInterest, accRatio, topPositionRatio, kline);
+	String kline = "k线价格";
+
+	List<String> typeList = Arrays.asList(openInterest, accRatio, topPositionRatio, kline);
 }

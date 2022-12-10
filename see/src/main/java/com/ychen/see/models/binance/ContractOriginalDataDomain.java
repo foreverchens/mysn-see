@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ public class ContractOriginalDataDomain {
 	/**
 	 * 最多存储几天的数据
 	 */
-	@Value("${see.cz.storeDay:7}")
+	@Value("${see.cz.storeDay:15}")
 	private int storeDay;
 	private int queueSize;
 
@@ -80,7 +79,7 @@ public class ContractOriginalDataDomain {
 		symbolList = CzClient.listSymbol();
 		log.info("[init] symbolList.size = {}", symbolList.size());
 		// todo 测试用
-		symbolList = Arrays.asList("AXSUSDT", "BTCUSDT");
+		// symbolList = Arrays.asList("BTCUSDT");
 
 		symbolAndOpenPositionMap = new HashMap<>(symbolList.size());
 		symbolAndKlineMap = new HashMap<>(symbolList.size());
@@ -308,5 +307,6 @@ public class ContractOriginalDataDomain {
 				DateTime.of(dataQueue.peekLast().getOpenTime()));
 
 	}
+	// dot ctk celr flow
 
 }

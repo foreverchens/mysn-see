@@ -67,7 +67,7 @@ public class EventDataDomain {
 		// 碰撞收集新产生的事件列表
 		List<ChangeEventInfo> newEventInfoList = new ArrayList<>();
 		for (ChangeEventFunc func : eventFuncList) {
-			ChangeEventInfo eventInfo = func.changeEvent(originalDataDomain.getCurVal(symbol,dataType), statisticM);
+			ChangeEventInfo eventInfo = func.changeEvent(originalDataDomain.getCurVal(symbol, dataType), statisticM);
 			if (!Objects.isNull(eventInfo)) {
 				newEventInfoList.add(eventInfo);
 			}

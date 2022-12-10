@@ -26,13 +26,12 @@ public class OpenPosChangeEventConfiguration {
 
 	private static final String dataType = DataTypeConstant.openInterest;
 
-	private static final String period = IntervalEnum.d3.name();
 
 	private static final String[] locationArr = {"高位", "低位"};
 
 
 	public static List<ChangeEventFunc> listOpenPosEvent() {
-		return Arrays.asList(day3Event());
+		return Arrays.asList(day3Event(), day7Event(), day15Event());
 	}
 
 
@@ -52,11 +51,65 @@ public class OpenPosChangeEventConfiguration {
 			return ChangeEventInfo.builder()
 								  .symbol(statisticM.getSymbol())
 								  .dataType(dataType)
-								  .period(period)
+								  .period(IntervalEnum.d3.name())
 								  .location(location)
+								  .curV(curVal)
+								  .lowV(day3LowV)
+								  .highV(day3HighV)
 								  .eventTime(DateUtil.formatDateTime(new Date()))
 								  .build();
 		};
 	}
 
+	private static ChangeEventFunc day7Event() {
+		return (curVal, statisticM) -> {
+			BigDecimal day7LowV = statisticM.getDay7LowV();
+			BigDecimal day7HighV = statisticM.getDay7HighV();
+			String location = Strings.EMPTY;
+			if (curVal.compareTo(day7LowV.multiply(BigDecimal.valueOf(1 + EventConstant.VAL__DEFAULT_OFFSET_RANGE))) <= 0) {
+				location = locationArr[1];
+			} else if (curVal.compareTo(day7HighV.multiply(BigDecimal.valueOf(1 - EventConstant.VAL__DEFAULT_OFFSET_RANGE))) >= 0) {
+				location = locationArr[0];
+			}
+			if (StringUtils.isBlank(location)) {
+				return null;
+			}
+			return ChangeEventInfo.builder()
+								  .symbol(statisticM.getSymbol())
+								  .dataType(dataType)
+								  .period(IntervalEnum.w1.name())
+								  .location(location)
+								  .curV(curVal)
+								  .lowV(day7LowV)
+								  .highV(day7HighV)
+								  .eventTime(DateUtil.formatDateTime(new Date()))
+								  .build();
+		};
+	}
+
+	private static ChangeEventFunc day15Event() {
+		return (curVal, statisticM) -> {
+			BigDecimal day15LowV = statisticM.getDay15LowV();
+			BigDecimal day15HighV = statisticM.getDay15HighV();
+			String location = Strings.EMPTY;
+			if (curVal.compareTo(day15LowV.multiply(BigDecimal.valueOf(1 + EventConstant.VAL__DEFAULT_OFFSET_RANGE))) <= 0) {
+				location = locationArr[1];
+			} else if (curVal.compareTo(day15HighV.multiply(BigDecimal.valueOf(1 - EventConstant.VAL__DEFAULT_OFFSET_RANGE))) >= 0) {
+				location = locationArr[0];
+			}
+			if (StringUtils.isBlank(location)) {
+				return null;
+			}
+			return ChangeEventInfo.builder()
+								  .symbol(statisticM.getSymbol())
+								  .dataType(dataType)
+								  .period(IntervalEnum.w2.name())
+								  .location(location)
+								  .curV(curVal)
+								  .lowV(day15LowV)
+								  .highV(day15HighV)
+								  .eventTime(DateUtil.formatDateTime(new Date()))
+								  .build();
+		};
+	}
 }

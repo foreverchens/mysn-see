@@ -7,6 +7,8 @@ import com.ychen.see.models.event.EventDataDomain;
 import com.ychen.see.models.event.domain.ChangeEventInfo;
 import com.ychen.see.models.statistic.StatisticDataDomain;
 
+import cn.hutool.core.collection.CollectionUtil;
+
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.Resource;
 
 import java.util.List;
-import java.util.TreeMap;
 
 /**
  * @author yyy
@@ -35,25 +36,42 @@ public class ContractDataStatisticAndAnalyzeService {
 
 	public void exe() {
 		List<String> symbolList = originalDataDomain.getSymbolList();
-		for (String dataType : DataTypeConstant.typeList) {
-			if (!DataTypeConstant.openInterest.equals(dataType)) {
-				continue;
-			}
-			for (String symbol : symbolList) {
-				// 先更新数据源
-				originalDataDomain.updateContractDataSource(symbol, dataType);
-				// 在更新一阶数据
-				statisticDataDomain.statistic(symbol, dataType);
-				// 更新二阶事件数据
-				eventDataDomain.changeEvent(symbol, dataType);
-			}
+		if (switchConfig.getOpenPos()) {
+			exe(symbolList, DataTypeConstant.openInterest);
 		}
-		TreeMap<Integer, String> map = new TreeMap<>((a, b) -> b - a);
+		if (switchConfig.getKline()) {
+			exe(symbolList, DataTypeConstant.kline);
+		}
+		if (switchConfig.getTopPosRatio()) {
+			exe(symbolList, DataTypeConstant.topPositionRatio);
+		}
+		if (switchConfig.getAccRatio()) {
+			exe(symbolList, DataTypeConstant.accRatio);
+		}
+
 		for (String symbol : symbolList) {
 			List<ChangeEventInfo> eventInfoList = eventDataDomain.listEventInfo(symbol);
-			map.put(eventInfoList.size(), symbol);
+			if (!CollectionUtil.isEmpty(eventInfoList)) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(String.format("币对%s存在%s个事件\n", symbol, eventInfoList.size()));
+				for (ChangeEventInfo data : eventInfoList) {
+					sb.append(String.format("持仓量在%S内的数值范围:[%s,%s],当前持仓量%s处于%s \n",
+							data.getPeriod(), data.getLowV(),
+							data.getHighV(), data.getCurV(), data.getLocation()));
+				}
+				System.out.println(sb);
+			}
 		}
-		System.out.println(map.firstEntry());
-		System.out.println(map.lastEntry());
+	}
+
+	private void exe(List<String> symbolList, String dataType) {
+		for (String symbol : symbolList) {
+			// 先更新数据源
+			originalDataDomain.updateContractDataSource(symbol, dataType);
+			// 在更新一阶数据
+			statisticDataDomain.statistic(symbol, dataType);
+			// 更新二阶事件数据
+			eventDataDomain.changeEvent(symbol, dataType);
+		}
 	}
 }

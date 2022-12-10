@@ -11,6 +11,7 @@ import com.ychen.see.models.statistic.domain.SymbolBaseStatisticM;
 import com.ychen.see.models.statistic.func.ContractDataStatisticFunc;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +31,8 @@ import java.util.stream.Collectors;
 @Configuration
 public class ContractLoShStatisticFuncImpl {
 
+	@Value("${see.cz.storeDay:15}")
+	private int storeDay;
 
 	@Bean(ContractDataStatisticFunc.beanPrefix + DataTypeConstant.topPositionRatio)
 	public ContractDataStatisticFunc topBean() {
@@ -52,11 +55,11 @@ public class ContractLoShStatisticFuncImpl {
 
 				log.info("分析{}的{}类型数据", symbol, dataType);
 				// 最近七天的多空比数据
-				List<BigDecimal> day7LongShortRatioDataList =
-						contractOriginalDataDomain.<CommonLongShortRatio>listLastContractData(symbol, dataType, 7).getData().stream().map(CommonLongShortRatio::getLongShortRatio).collect(Collectors.toList());
+				List<BigDecimal> day15LongShortRatioDataList =
+						contractOriginalDataDomain.<CommonLongShortRatio>listLastContractData(symbol, dataType, storeDay).getData().stream().map(CommonLongShortRatio::getLongShortRatio).collect(Collectors.toList());
 
 				// 统计3天和7天内数据
-				statisticDay3AndDay7(longShortRatio, day7LongShortRatioDataList);
+				statisticDay3To15(longShortRatio, day15LongShortRatioDataList);
 				return CallResult.success();
 			}
 		};

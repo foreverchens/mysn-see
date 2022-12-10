@@ -7,5 +7,5 @@ package com.ychen.see.models.event.constant;
  */
 public interface EventConstant {
 
-	double VAL__DEFAULT_OFFSET_RANGE = 0.1;
+	double VAL__DEFAULT_OFFSET_RANGE = 0.05;
 }

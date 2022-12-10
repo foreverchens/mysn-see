@@ -31,6 +31,12 @@ public class SymbolBaseStatisticM {
 
 	private BigDecimal day7AvgV;
 
+	private BigDecimal day15HighV;
+
+	private BigDecimal day15LowV;
+
+	private BigDecimal day15AvgV;
+
 	private BigDecimal day3Amplitude;
 
 	private BigDecimal day7Amplitude;
@@ -48,6 +54,9 @@ public class SymbolBaseStatisticM {
 				", day7HighV=" + day7HighV +
 				", day7LowV=" + day7LowV +
 				", day7AvgV=" + day7AvgV +
+				", day15ighV=" + day15HighV +
+				", day15LowV=" + day15LowV +
+				", day15AvgV=" + day15AvgV +
 				", day3Amplitude=" + day3Amplitude +
 				", day7Amplitude=" + day7Amplitude +
 				", day15Amplitude=" + day15Amplitude +

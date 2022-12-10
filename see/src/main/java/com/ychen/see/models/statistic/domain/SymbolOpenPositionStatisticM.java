@@ -16,12 +16,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class SymbolOpenPositionStatisticM extends SymbolBaseStatisticM {
 
-
-	private BigDecimal day15HighV;
-
-	private BigDecimal day15LowV;
-
-
 	private BigDecimal day30HighV;
 
 	private BigDecimal day30LowV;

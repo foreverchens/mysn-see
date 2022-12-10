@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 /**
  * @author yyy
  */
@@ -25,6 +27,12 @@ public class ChangeEventInfo {
 	 * 数值位置、[高位,低位]
 	 */
 	private String location;
+
+	private BigDecimal lowV;
+
+	private BigDecimal highV;
+
+	private BigDecimal curV;
 
 	private String eventTime;
 

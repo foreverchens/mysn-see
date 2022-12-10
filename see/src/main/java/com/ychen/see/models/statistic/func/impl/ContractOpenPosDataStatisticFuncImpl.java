@@ -10,6 +10,7 @@ import com.ychen.see.models.statistic.domain.ContractStatisticDataM;
 import com.ychen.see.models.statistic.domain.SymbolOpenPositionStatisticM;
 import com.ychen.see.models.statistic.func.ContractDataStatisticFunc;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component(ContractDataStatisticFunc.beanPrefix+ DataTypeConstant.openInterest)
 public class ContractOpenPosDataStatisticFuncImpl implements ContractDataStatisticFunc {
+
+	@Value("${see.cz.storeDay:15}")
+	private int storeDay;
+
+
 	@Override
 	public CallResult<String> doStatistic(String dataType, ContractStatisticDataM statisticDataM,
 										  ContractOriginalDataDomain contractOriginalDataDomain) {
@@ -35,11 +41,11 @@ public class ContractOpenPosDataStatisticFuncImpl implements ContractDataStatist
 
 		log.info("分析{}的{}类型数据", symbol, dataType);
 		// 最近七天的持仓量数据
-		List<BigDecimal> day7OpenInterestStatValDataList =
-				contractOriginalDataDomain.<OpenInterestStat>listLastContractData(symbol, dataType, 7).getData().stream().map(OpenInterestStat::getSumOpenInterestValue).collect(Collectors.toList());
+		List<BigDecimal> day15OpenInterestStatValDataList =
+				contractOriginalDataDomain.<OpenInterestStat>listLastContractData(symbol, dataType, storeDay).getData().stream().map(OpenInterestStat::getSumOpenInterestValue).collect(Collectors.toList());
 
 		// 统计三天和七天内数据
-		statisticDay3AndDay7(openPosStatisticM, day7OpenInterestStatValDataList);
+		statisticDay3To15(openPosStatisticM, day15OpenInterestStatValDataList);
 
 		// todo 15日30日的数据待定。。。
 		return CallResult.success();
