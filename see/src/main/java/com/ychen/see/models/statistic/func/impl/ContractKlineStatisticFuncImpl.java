@@ -2,7 +2,7 @@ package com.ychen.see.models.statistic.func.impl;/**
  *
  */
 
-import com.binance.client.model.market.CommonLongShortRatio;
+import com.binance.client.model.market.Candlestick;
 import com.ychen.see.common.CallResult;
 import com.ychen.see.models.binance.ContractOriginalDataDomain;
 import com.ychen.see.models.binance.constant.DataTypeConstant;
@@ -35,10 +35,11 @@ public class ContractKlineStatisticFuncImpl implements ContractDataStatisticFunc
 
 		log.info("分析{}的{}类型数据", symbol, dataType);
 		// 最近七天的多空比数据
-		List<BigDecimal> day7LongShortRatioDataList =
-				contractOriginalDataDomain.<CommonLongShortRatio>listLastContractData(symbol, dataType, 7).getData().stream().map(CommonLongShortRatio::getLongShortRatio).collect(Collectors.toList());
+		List<BigDecimal> priceList =
+				contractOriginalDataDomain.<Candlestick>listLastContractData(symbol, dataType, 7)
+										  .getData().stream().map(Candlestick::getOpen).collect(Collectors.toList());
 
 		// todo 震荡分析法获取 七天和三天内的数值。。。
-		return CallResult.success(day7LongShortRatioDataList.toString());
+		return CallResult.success(priceList.toString());
 	}
 }

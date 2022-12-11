@@ -34,7 +34,7 @@ public class ContractLoShStatisticFuncImpl {
 	@Value("${see.cz.storeDay:15}")
 	private int storeDay;
 
-	@Bean(ContractDataStatisticFunc.beanPrefix + DataTypeConstant.topPositionRatio)
+	@Bean(ContractDataStatisticFunc.beanPrefix + DataTypeConstant.topOiRatio)
 	public ContractDataStatisticFunc topBean() {
 		return buildBean();
 	}

@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
  * {@code @date} 2022/12/9 17:35
  */
 @Slf4j
-@Component(ContractDataStatisticFunc.beanPrefix+ DataTypeConstant.openInterest)
-public class ContractOpenPosDataStatisticFuncImpl implements ContractDataStatisticFunc {
+@Component(ContractDataStatisticFunc.beanPrefix+ DataTypeConstant.oi)
+public class ContractOiDataStatisticFuncImpl implements ContractDataStatisticFunc {
 
 	@Value("${see.cz.storeDay:15}")
 	private int storeDay;
@@ -36,16 +36,16 @@ public class ContractOpenPosDataStatisticFuncImpl implements ContractDataStatist
 	@Override
 	public CallResult<String> doStatistic(String dataType, ContractStatisticDataM statisticDataM,
 										  ContractOriginalDataDomain contractOriginalDataDomain) {
-		SymbolOpenPositionStatisticM openPosStatisticM = (SymbolOpenPositionStatisticM) statisticDataM.get(dataType);
+		SymbolOpenPositionStatisticM oiStatisticM = (SymbolOpenPositionStatisticM) statisticDataM.get(dataType);
 		String symbol = statisticDataM.getSymbol();
 
 		log.info("分析{}的{}类型数据", symbol, dataType);
 		// 最近七天的持仓量数据
-		List<BigDecimal> day15OpenInterestStatValDataList =
+		List<BigDecimal> day15OiValDataList =
 				contractOriginalDataDomain.<OpenInterestStat>listLastContractData(symbol, dataType, storeDay).getData().stream().map(OpenInterestStat::getSumOpenInterestValue).collect(Collectors.toList());
 
 		// 统计三天和七天内数据
-		statisticDay3To15(openPosStatisticM, day15OpenInterestStatValDataList);
+		statisticDay3To15(oiStatisticM, day15OiValDataList);
 
 		// todo 15日30日的数据待定。。。
 		return CallResult.success();

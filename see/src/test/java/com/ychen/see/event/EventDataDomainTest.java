@@ -25,12 +25,12 @@ public class EventDataDomainTest {
 
 	@Before
 	public void before() {
-		statisticDataDomain.statistic("BTCUSDT", DataTypeConstant.openInterest);
+		statisticDataDomain.statistic("BTCUSDT", DataTypeConstant.oi);
 	}
 
 	@Test
 	public void changeEventTest() {
-		eventDataDomain.changeEvent("BTCUSDT", DataTypeConstant.openInterest);
+		eventDataDomain.changeEvent("BTCUSDT", DataTypeConstant.oi);
 	}
 
 	@Test

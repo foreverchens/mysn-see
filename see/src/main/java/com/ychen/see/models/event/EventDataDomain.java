@@ -6,7 +6,7 @@ import com.ychen.see.models.event.domain.ChangeEventInfo;
 import com.ychen.see.models.event.func.ChangeEventFunc;
 import com.ychen.see.models.event.func.impl.KlineChangeEventConfiguration;
 import com.ychen.see.models.event.func.impl.LoShChangeEventConfiguration;
-import com.ychen.see.models.event.func.impl.OpenPosChangeEventConfiguration;
+import com.ychen.see.models.event.func.impl.OiChangeEventConfiguration;
 import com.ychen.see.models.statistic.StatisticDataDomain;
 import com.ychen.see.models.statistic.domain.SymbolBaseStatisticM;
 
@@ -50,10 +50,10 @@ public class EventDataDomain {
 
 	public EventDataDomain() {
 		dataTypeAndEventListMap = new HashMap<>();
-		dataTypeAndEventListMap.put(DataTypeConstant.openInterest, OpenPosChangeEventConfiguration.listOpenPosEvent());
+		dataTypeAndEventListMap.put(DataTypeConstant.oi, OiChangeEventConfiguration.listOiEvent());
 		dataTypeAndEventListMap.put(DataTypeConstant.kline, KlineChangeEventConfiguration.listKlineEvent());
-		dataTypeAndEventListMap.put(DataTypeConstant.topPositionRatio, LoShChangeEventConfiguration.listLoShEvent());
-		dataTypeAndEventListMap.put(DataTypeConstant.accRatio, LoShChangeEventConfiguration.listLoShEvent());
+		dataTypeAndEventListMap.put(DataTypeConstant.topOiRatio, LoShChangeEventConfiguration.listTopLoShEvent());
+		dataTypeAndEventListMap.put(DataTypeConstant.accRatio, LoShChangeEventConfiguration.listAccLoShEvent());
 
 		symbolAndDynamicEventListMap = new HashMap<>();
 	}

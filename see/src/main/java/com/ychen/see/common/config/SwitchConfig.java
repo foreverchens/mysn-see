@@ -14,12 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SwitchConfig {
 
-	@Value("${see.config.openPos:true}")
-	private Boolean openPos;
+	@Value("${see.config.oi:true}")
+	private Boolean oi;
 	@Value("${see.config.accRatio:false}")
 	private Boolean accRatio;
-	@Value("${see.config.topPosRatio:false}")
-	private Boolean topPosRatio;
+	@Value("${see.config.topOiRatio:true}")
+	private Boolean topOiRatio;
 	@Value("${see.config.kline:false}")
 	private Boolean kline;
 }

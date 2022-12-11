@@ -37,8 +37,8 @@ public class ContractOriginalDataDomainTest {
 		SwitchConfig switchConfig = new SwitchConfig();
 		switchConfig.setKline(true);
 		switchConfig.setAccRatio(true);
-		switchConfig.setTopPosRatio(true);
-		switchConfig.setOpenPos(true);
+		switchConfig.setTopOiRatio(true);
+		switchConfig.setOi(true);
 		switchConfigField.set(contractOriginalDataDomain, switchConfig);
 		Field storeDay = ContractOriginalDataDomain.class.getDeclaredField("storeDay");
 		storeDay.setAccessible(true);
@@ -52,7 +52,7 @@ public class ContractOriginalDataDomainTest {
 		log.info("近七日的数据初始化结束");
 		for (String symbol : symbolList) {
 			ArrayDeque<OpenInterestStat> dataList =
-					contractOriginalDataDomain.getSymbolAndOpenPositionMap().get(symbol);
+					contractOriginalDataDomain.getSymbolAndOiMap().get(symbol);
 			OpenInterestStat first = dataList.peekFirst();
 			OpenInterestStat last = dataList.peekLast();
 			log.info("{} 初始化数据量:{},数据范围:{} - {}", symbol, dataList.size(), DateTime.of(first.getTimestamp()),
@@ -65,7 +65,7 @@ public class ContractOriginalDataDomainTest {
 	public void listLastContractDataTest() {
 		List<OpenInterestStat> openInterestStatList =
 				contractOriginalDataDomain.<OpenInterestStat>listLastContractData("BTCUSDT",
-						DataTypeConstant.openInterest, 3).getData();
+						DataTypeConstant.oi, 3).getData();
 		CzUtil.dataTimeOrdered(openInterestStatList);
 		log.info("近三天持仓量数据范围:{} - {}", DateTime.of(openInterestStatList.get(0).getTimestamp()),
 				DateTime.of(openInterestStatList.get(openInterestStatList.size() - 1).getTimestamp()));
@@ -78,7 +78,7 @@ public class ContractOriginalDataDomainTest {
 				DateTime.of(commonLongShortRatioList.get(commonLongShortRatioList.size() - 1).getTimestamp()));
 
 		commonLongShortRatioList = contractOriginalDataDomain.<CommonLongShortRatio>listLastContractData("BTCUSDT",
-				DataTypeConstant.topPositionRatio, 3).getData();
+				DataTypeConstant.topOiRatio, 3).getData();
 		CzUtil.dataTimeOrdered(commonLongShortRatioList);
 		log.info("近三天大户持仓量多空比数据范围:{} - {}", DateTime.of(commonLongShortRatioList.get(0).getTimestamp()),
 				DateTime.of(commonLongShortRatioList.get(commonLongShortRatioList.size() - 1).getTimestamp()));
@@ -90,7 +90,7 @@ public class ContractOriginalDataDomainTest {
 	public void listLongTimeContractDataTest() {
 		List<OpenInterestStat> openInterestStatList =
 				contractOriginalDataDomain.<OpenInterestStat>listLastContractData("BTCUSDT",
-						DataTypeConstant.openInterest, 15).getData();
+						DataTypeConstant.oi, 15).getData();
 		CzUtil.dataTimeOrdered(openInterestStatList);
 		log.info("近十五天持仓量数据范围:{} - {}", DateTime.of(openInterestStatList.get(0).getTimestamp()),
 				DateTime.of(openInterestStatList.get(openInterestStatList.size() - 1).getTimestamp()));

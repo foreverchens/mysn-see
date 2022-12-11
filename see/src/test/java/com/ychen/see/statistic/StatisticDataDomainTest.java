@@ -5,7 +5,7 @@ import com.ychen.see.models.binance.constant.DataTypeConstant;
 import com.ychen.see.models.statistic.StatisticDataDomain;
 import com.ychen.see.models.statistic.domain.SymbolBaseStatisticM;
 import com.ychen.see.models.statistic.func.ContractDataStatisticFunc;
-import com.ychen.see.models.statistic.func.impl.ContractOpenPosDataStatisticFuncImpl;
+import com.ychen.see.models.statistic.func.impl.ContractOiDataStatisticFuncImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,16 +31,16 @@ public class StatisticDataDomainTest {
 		Field statisticFuncMapField = StatisticDataDomain.class.getDeclaredField("statisticFuncMap");
 		statisticFuncMapField.setAccessible(true);
 		Map<String, ContractDataStatisticFunc> statisticFuncMap = new HashMap<>();
-		statisticFuncMap.put(DataTypeConstant.openInterest, new ContractOpenPosDataStatisticFuncImpl());
+		statisticFuncMap.put(DataTypeConstant.oi, new ContractOiDataStatisticFuncImpl());
 		statisticFuncMapField.set(statisticDataDomain, statisticFuncMap);
 
 	}
 
 	@Test
 	public void test() {
-		statisticDataDomain.statistic("AXSUSDT",DataTypeConstant.openInterest);
+		statisticDataDomain.statistic("AXSUSDT",DataTypeConstant.oi);
 		SymbolBaseStatisticM statisticM = statisticDataDomain.getStatisticInfo("AXSUSDT",
-				DataTypeConstant.openInterest);
+				DataTypeConstant.oi);
 		System.out.println(statisticM);
 	}
 }

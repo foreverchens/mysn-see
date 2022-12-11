@@ -18,6 +18,10 @@ public class SymbolKlineStatisticM extends SymbolBaseStatisticM {
 
 	private BigDecimal shakeVal;
 
+	public SymbolKlineStatisticM(String symbol) {
+		super(symbol);
+	}
+
 
 	@Override
 	public String toString() {

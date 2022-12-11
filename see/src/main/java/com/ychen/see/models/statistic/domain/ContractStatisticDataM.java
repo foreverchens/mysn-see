@@ -23,10 +23,10 @@ public class ContractStatisticDataM {
 		this.symbol = symbol;
 		this.map = new HashMap<>();
 		this.map =MapUtil.<String, SymbolBaseStatisticM>builder()
-					   .put(DataTypeConstant.accRatio, new SymbolBaseStatisticM())
-					   .put(DataTypeConstant.topPositionRatio, new SymbolBaseStatisticM())
-					   .put(DataTypeConstant.openInterest, new SymbolOpenPositionStatisticM())
-					   .put(DataTypeConstant.kline, new SymbolKlineStatisticM())
+					   .put(DataTypeConstant.accRatio, new SymbolBaseStatisticM(symbol))
+					   .put(DataTypeConstant.topOiRatio, new SymbolBaseStatisticM(symbol))
+					   .put(DataTypeConstant.oi, new SymbolOpenPositionStatisticM(symbol))
+					   .put(DataTypeConstant.kline, new SymbolKlineStatisticM(symbol))
 						 .build();
 	}
 

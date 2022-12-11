@@ -1,6 +1,7 @@
 package com.ychen.see.models.schedule.server;
 
 import com.ychen.see.common.config.SwitchConfig;
+import com.ychen.see.common.util.CommonUtil;
 import com.ychen.see.models.binance.ContractOriginalDataDomain;
 import com.ychen.see.models.binance.constant.DataTypeConstant;
 import com.ychen.see.models.event.EventDataDomain;
@@ -36,14 +37,14 @@ public class ContractDataStatisticAndAnalyzeService {
 
 	public void exe() {
 		List<String> symbolList = originalDataDomain.getSymbolList();
-		if (switchConfig.getOpenPos()) {
-			exe(symbolList, DataTypeConstant.openInterest);
+		if (switchConfig.getOi()) {
+			exe(symbolList, DataTypeConstant.oi);
 		}
 		if (switchConfig.getKline()) {
 			exe(symbolList, DataTypeConstant.kline);
 		}
-		if (switchConfig.getTopPosRatio()) {
-			exe(symbolList, DataTypeConstant.topPositionRatio);
+		if (switchConfig.getTopOiRatio()) {
+			exe(symbolList, DataTypeConstant.topOiRatio);
 		}
 		if (switchConfig.getAccRatio()) {
 			exe(symbolList, DataTypeConstant.accRatio);
@@ -56,8 +57,9 @@ public class ContractDataStatisticAndAnalyzeService {
 				sb.append(String.format("币对%s存在%s个事件\n", symbol, eventInfoList.size()));
 				for (ChangeEventInfo data : eventInfoList) {
 					sb.append(String.format("持仓量在%S内的数值范围:[%s,%s],当前持仓量%s处于%s \n",
-							data.getPeriod(), data.getLowV(),
-							data.getHighV(), data.getCurV(), data.getLocation()));
+							data.getPeriod(), CommonUtil.numConvert(data.getLowV()),
+							CommonUtil.numConvert(data.getHighV()), CommonUtil.numConvert(data.getCurV()),
+							data.getLocation()));
 				}
 				System.out.println(sb);
 			}

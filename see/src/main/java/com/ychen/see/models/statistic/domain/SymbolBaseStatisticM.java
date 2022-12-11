@@ -43,6 +43,9 @@ public class SymbolBaseStatisticM {
 
 	private BigDecimal day15Amplitude;
 
+	public SymbolBaseStatisticM(String symbol) {
+		this.symbol = symbol;
+	}
 
 	@Override
 	public String toString() {
