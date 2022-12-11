@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.Data;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
@@ -31,6 +32,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 存储原始数据、并保持其最新
@@ -90,33 +93,62 @@ public class ContractOriginalDataDomain {
 		this.initOiStatList();
 	}
 
+	@SneakyThrows
 	private void initOiStatList() {
+		log.info("[init] 源数据初始化开始....");
 		long startTime = DateUtil.offsetDay(new Date(), storeDay * -1).getTime();
-		for (String symbol : symbolList) {
-			log.info("[init] {} 源数据初始化中....", symbol);
+		CountDownLatch cdl = new CountDownLatch(4);
+		CompletableFuture.runAsync(() -> {
 			if (switchConfig.getOi()) {
-				// 初始化持仓量数据。。。
-				List<OpenInterestStat> openInterestStatList = CzClient.listOpenInterest(symbol, startTime, null);
-				symbolAndOiMap.put(symbol, new ArrayDeque<>(openInterestStatList));
+				log.info("[init] 持仓量源数据初始化开始....");
+				symbolList.parallelStream().forEach(symbol -> {
+					// 初始化持仓量数据。。。
+					log.info("[init] {}-持仓量源数据初始化开始....", symbol);
+					List<OpenInterestStat> openInterestStatList = CzClient.listOpenInterest(symbol, startTime, null);
+					symbolAndOiMap.put(symbol, new ArrayDeque<>(openInterestStatList));
+				});
 			}
+			cdl.countDown();
+		});
+		CompletableFuture.runAsync(() -> {
 			if (switchConfig.getTopOiRatio()) {
-				// 初始化大户持仓量多空比数据
-				List<CommonLongShortRatio> topPositionRatioList = CzClient.listTopPositionRatio(symbol, startTime,
-						null);
-				symbolAndTopOiRatioMap.put(symbol, new ArrayDeque<>(topPositionRatioList));
+				log.info("[init] 大户持仓量多空比源数据初始化开始....");
+				symbolList.parallelStream().forEach(symbol -> {
+					// 初始化大户持仓量多空比数据
+					log.info("[init] {}-大户持仓量多空比源数据初始化开始....", symbol);
+					List<CommonLongShortRatio> topPositionRatioList = CzClient.listTopPositionRatio(symbol, startTime,
+							null);
+					symbolAndTopOiRatioMap.put(symbol, new ArrayDeque<>(topPositionRatioList));
+				});
 			}
+			cdl.countDown();
+		});
+		CompletableFuture.runAsync(() -> {
 			if (switchConfig.getKline()) {
-				// 初始化k线数据。。。
-				List<Candlestick> klineList = CzClient.listKline(symbol, startTime, null);
-				symbolAndKlineMap.put(symbol, new ArrayDeque<>(klineList));
+				log.info("[init] kline源数据初始化开始....");
+				symbolList.parallelStream().forEach(symbol -> {
+					// 初始化k线数据。。。
+					log.info("[init] {}-kline源数据初始化开始....", symbol);
+					List<Candlestick> klineList = CzClient.listKline(symbol, startTime, null);
+					symbolAndKlineMap.put(symbol, new ArrayDeque<>(klineList));
+				});
 			}
+			cdl.countDown();
+		});
+		CompletableFuture.runAsync(() -> {
 			if (switchConfig.getAccRatio()) {
-				// 初始化账户多空比数据
-				List<CommonLongShortRatio> accRatioList = CzClient.listAccRatio(symbol, startTime, null);
-				symbolAndAccRatioMap.put(symbol, new ArrayDeque<>(accRatioList));
+				log.info("[init] 账户多空比源数据初始化开始....");
+				symbolList.parallelStream().forEach(symbol -> {
+					// 初始化账户多空比数据
+					log.info("[init] {}-账户多空比源数据初始化开始....", symbol);
+					List<CommonLongShortRatio> accRatioList = CzClient.listAccRatio(symbol, startTime, null);
+					symbolAndAccRatioMap.put(symbol, new ArrayDeque<>(accRatioList));
+				});
 			}
-		}
-		log.info("[init] {} 源数据初始化结束....");
+			cdl.countDown();
+		});
+		cdl.await();
+		log.info("[init] 源数据初始化结束....");
 	}
 
 	/*-----------------开放函数-----------------*/

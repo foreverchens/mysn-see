@@ -1,5 +1,6 @@
 package com.ychen.see.models.binance;
 
+import com.alibaba.fastjson.JSON;
 import com.binance.client.RequestOptions;
 import com.binance.client.SyncRequestClient;
 import com.binance.client.impl.BinanceApiInternalFactory;
