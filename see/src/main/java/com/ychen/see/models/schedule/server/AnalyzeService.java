@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class ContractDataStatisticAndAnalyzeService {
+public class AnalyzeService {
 
 	@Resource
 	private SwitchConfig switchConfig;

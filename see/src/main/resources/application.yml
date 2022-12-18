@@ -10,8 +10,6 @@ server:
 spring:
   application:
     name: mysn-see
-  profiles:
-    active: dev
   # jackson时间格式化
   jackson:
     time-zone: GMT+8
@@ -22,4 +20,8 @@ spring:
       max-request-size: 100MB
       enabled: true
 
+
+telegram-bot:
+  token: '5956129601:AAFgytRDOctzMjfU7JQRQWzlyoybxank3QQ'
+  chatId: -814478067
 
