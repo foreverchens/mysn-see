@@ -1,12 +1,8 @@
 package com.ychen.see.models.event;
 
 import com.ychen.see.models.binance.ContractOriginalDataDomain;
-import com.ychen.see.models.binance.constant.DataTypeConstant;
 import com.ychen.see.models.event.domain.ChangeEventInfo;
 import com.ychen.see.models.event.func.ChangeEventFunc;
-import com.ychen.see.models.event.func.impl.KlineChangeEventConfiguration;
-import com.ychen.see.models.event.func.impl.LoShChangeEventConfiguration;
-import com.ychen.see.models.event.func.impl.OiChangeEventConfiguration;
 import com.ychen.see.models.statistic.StatisticDataDomain;
 import com.ychen.see.models.statistic.domain.SymbolBaseStatisticM;
 
@@ -14,6 +10,7 @@ import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.collection.CollectionUtil;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 /**
  * @author yyy
  */
@@ -39,7 +35,8 @@ public class EventDataDomain {
 	@Value("${see.event.timeout:24}")
 	private long eventTimeoutHours;
 
-	private Map<String, List<ChangeEventFunc>> dataTypeAndEventListMap;
+	@Resource
+	private Map<String, ChangeEventFunc> dataTypeAndEventListMap;
 
 	private Map<String, TimedCache<String, ChangeEventInfo>> symbolAndDynamicEventListMap;
 
@@ -49,12 +46,6 @@ public class EventDataDomain {
 	private ContractOriginalDataDomain originalDataDomain;
 
 	public EventDataDomain() {
-		dataTypeAndEventListMap = new HashMap<>();
-		dataTypeAndEventListMap.put(DataTypeConstant.oi, OiChangeEventConfiguration.listOiEvent());
-		dataTypeAndEventListMap.put(DataTypeConstant.kline, KlineChangeEventConfiguration.listKlineEvent());
-		dataTypeAndEventListMap.put(DataTypeConstant.topOiRatio, LoShChangeEventConfiguration.listTopLoShEvent());
-		dataTypeAndEventListMap.put(DataTypeConstant.accRatio, LoShChangeEventConfiguration.listAccLoShEvent());
-
 		symbolAndDynamicEventListMap = new HashMap<>();
 	}
 
@@ -62,8 +53,15 @@ public class EventDataDomain {
 		// 根据币对和数据类型获取一阶统计数据
 		SymbolBaseStatisticM statisticM = statisticDataDomain.getStatisticInfo(symbol, dataType);
 		// 获取该数据类型定义的数据异动事件列表
-		List<ChangeEventFunc> eventFuncList = dataTypeAndEventListMap.get(dataType);
+		List<ChangeEventFunc> eventFuncList = new ArrayList<>();
 
+		Iterator<Map.Entry<String, ChangeEventFunc>> iterator = dataTypeAndEventListMap.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String, ChangeEventFunc> next = iterator.next();
+			if (StringUtils.startsWith(next.getKey(), dataType)) {
+				eventFuncList.add(next.getValue());
+			}
+		}
 		// 碰撞收集新产生的事件列表
 		List<ChangeEventInfo> newEventInfoList = new ArrayList<>();
 		for (ChangeEventFunc func : eventFuncList) {

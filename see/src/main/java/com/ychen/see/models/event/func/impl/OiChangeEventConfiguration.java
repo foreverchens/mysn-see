@@ -9,13 +9,13 @@ import cn.hutool.core.date.DateUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import static com.ychen.see.models.event.constant.EventConstant.OI_AMPLITUDE_THRESHOLD;
 import static com.ychen.see.models.event.constant.EventConstant.OI_OFFSET_RANGE;
@@ -24,6 +24,7 @@ import static com.ychen.see.models.event.constant.EventConstant.OI_OFFSET_RANGE;
  * @author yyy
  */
 @Slf4j
+@Configuration
 public class OiChangeEventConfiguration {
 
 	private static final String dataType = DataTypeConstant.oi;
@@ -32,12 +33,8 @@ public class OiChangeEventConfiguration {
 	private static final String[] locationArr = {"高位", "低位"};
 
 
-	public static List<ChangeEventFunc> listOiEvent() {
-		return Arrays.asList(day3Event(), day7Event(), day15Event());
-	}
-
-
-	private static ChangeEventFunc day3Event() {
+	@Bean(DataTypeConstant.oi + "-day3")
+	public ChangeEventFunc day3Event() {
 		return (curVal, statisticM) -> {
 			BigDecimal day3Amplitude = statisticM.getDay3Amplitude();
 			// 波动率过小不予处理
@@ -59,7 +56,8 @@ public class OiChangeEventConfiguration {
 		};
 	}
 
-	private static ChangeEventFunc day7Event() {
+	@Bean(DataTypeConstant.oi + "-day7")
+	public ChangeEventFunc day7Event() {
 		return (curVal, statisticM) -> {
 			BigDecimal day7Amplitude = statisticM.getDay7Amplitude();
 			// 波动率过小不予处理
@@ -81,7 +79,8 @@ public class OiChangeEventConfiguration {
 		};
 	}
 
-	private static ChangeEventFunc day15Event() {
+	@Bean(DataTypeConstant.oi + "-day15")
+	public ChangeEventFunc day15Event() {
 		return (curVal, statisticM) -> {
 			BigDecimal day15Amplitude = statisticM.getDay15Amplitude();
 			// 波动率过小不予处理

@@ -9,13 +9,13 @@ import cn.hutool.core.date.DateUtil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import static com.ychen.see.models.event.constant.EventConstant.LO_SH_TOP_AMPLITUDE_THRESHOLD;
 import static com.ychen.see.models.event.constant.EventConstant.LO_SH_TOP_OFFSET_RANGE;
@@ -24,6 +24,7 @@ import static com.ychen.see.models.event.constant.EventConstant.LO_SH_TOP_OFFSET
  * @author yyy
  */
 @Slf4j
+@Configuration
 public class LoShChangeEventConfiguration {
 
 	private static final String dataTypeOfTop = DataTypeConstant.topOiRatio;
@@ -31,15 +32,27 @@ public class LoShChangeEventConfiguration {
 
 	private static final String[] locationArr = {"高位", "低位"};
 
-	public static List<ChangeEventFunc> listTopLoShEvent() {
-		return Arrays.asList(day7Event(dataTypeOfTop), day15Event(dataTypeOfTop));
+	@Bean(DataTypeConstant.topOiRatio + "-day7")
+	public ChangeEventFunc topDay7Event() {
+		return day7EventBuilder(dataTypeOfTop);
 	}
 
-	public static List<ChangeEventFunc> listAccLoShEvent() {
-		return Arrays.asList(day7Event(dataTypeOfAcc), day15Event(dataTypeOfAcc));
+	@Bean(DataTypeConstant.topOiRatio + "-day15")
+	public ChangeEventFunc topDay15Event() {
+		return day15EventBuilder(dataTypeOfTop);
 	}
 
-	private static ChangeEventFunc day7Event(String dataType) {
+	@Bean(DataTypeConstant.accRatio + "-day7")
+	public ChangeEventFunc accDay7Event() {
+		return day7EventBuilder(dataTypeOfAcc);
+	}
+
+	@Bean(DataTypeConstant.accRatio + "-day15")
+	public ChangeEventFunc accDay15Event() {
+		return day15EventBuilder(dataTypeOfAcc);
+	}
+
+	private static ChangeEventFunc day7EventBuilder(String dataType) {
 		return (curVal, statisticM) -> {
 			BigDecimal day7Amplitude = statisticM.getDay7Amplitude();
 			// 波动率过小不予处理
@@ -61,7 +74,7 @@ public class LoShChangeEventConfiguration {
 		};
 	}
 
-	private static ChangeEventFunc day15Event(String dataType) {
+	private static ChangeEventFunc day15EventBuilder(String dataType) {
 		return (curVal, statisticM) -> {
 			BigDecimal day15Amplitude = statisticM.getDay15Amplitude();
 			// 波动率过小不予处理
