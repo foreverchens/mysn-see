@@ -39,6 +39,9 @@ public class ContractKlineStatisticFuncImpl implements ContractDataStatisticFunc
 				contractOriginalDataDomain.<Candlestick>listLastContractData(symbol, dataType, 7)
 										  .getData().stream().map(Candlestick::getOpen).collect(Collectors.toList());
 
+		// 统计3天和7天内数据
+		statisticDay3To15(klineStatisticM, priceList);
+
 		// todo 震荡分析法获取 七天和三天内的数值。。。
 		return CallResult.success(priceList.toString());
 	}

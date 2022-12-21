@@ -2,6 +2,7 @@ package com.ychen.see.models.event.func.impl;
 
 import com.ychen.see.common.enums.IntervalEnum;
 import com.ychen.see.models.binance.constant.DataTypeConstant;
+import com.ychen.see.models.event.constant.EventConstant;
 import com.ychen.see.models.event.domain.ChangeEventInfo;
 import com.ychen.see.models.event.func.ChangeEventFunc;
 
@@ -30,9 +31,6 @@ public class OiChangeEventConfiguration {
 	private static final String dataType = DataTypeConstant.oi;
 
 
-	private static final String[] locationArr = {"高位", "低位"};
-
-
 	@Bean(DataTypeConstant.oi + "-day3")
 	public ChangeEventFunc day3Event() {
 		return (curVal, statisticM) -> {
@@ -45,9 +43,9 @@ public class OiChangeEventConfiguration {
 			BigDecimal day3HighV = statisticM.getDay3HighV();
 			String location = Strings.EMPTY;
 			if (curVal.compareTo(day3LowV.multiply(BigDecimal.valueOf(1 + OI_OFFSET_RANGE))) <= 0) {
-				location = locationArr[1];
+				location = EventConstant.locationArr[1];
 			} else if (curVal.compareTo(day3HighV.multiply(BigDecimal.valueOf(1 - OI_OFFSET_RANGE))) >= 0) {
-				location = locationArr[0];
+				location = EventConstant.locationArr[0];
 			}
 			if (StringUtils.isBlank(location)) {
 				return null;
@@ -68,9 +66,9 @@ public class OiChangeEventConfiguration {
 			BigDecimal day7HighV = statisticM.getDay7HighV();
 			String location = Strings.EMPTY;
 			if (curVal.compareTo(day7LowV.multiply(BigDecimal.valueOf(1 + OI_OFFSET_RANGE))) <= 0) {
-				location = locationArr[1];
+				location = EventConstant.locationArr[1];
 			} else if (curVal.compareTo(day7HighV.multiply(BigDecimal.valueOf(1 - OI_OFFSET_RANGE))) >= 0) {
-				location = locationArr[0];
+				location = EventConstant.locationArr[0];
 			}
 			if (StringUtils.isBlank(location)) {
 				return null;
@@ -91,9 +89,9 @@ public class OiChangeEventConfiguration {
 			BigDecimal day15HighV = statisticM.getDay15HighV();
 			String location = Strings.EMPTY;
 			if (curVal.compareTo(day15LowV.multiply(BigDecimal.valueOf(1 + OI_OFFSET_RANGE))) <= 0) {
-				location = locationArr[1];
+				location = EventConstant.locationArr[1];
 			} else if (curVal.compareTo(day15HighV.multiply(BigDecimal.valueOf(1 - OI_OFFSET_RANGE))) >= 0) {
-				location = locationArr[0];
+				location = EventConstant.locationArr[0];
 			}
 			if (StringUtils.isBlank(location)) {
 				return null;

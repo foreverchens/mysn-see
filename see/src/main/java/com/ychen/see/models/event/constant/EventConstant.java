@@ -26,4 +26,8 @@ public interface EventConstant {
 	BigDecimal OI_AMPLITUDE_THRESHOLD = BigDecimal.valueOf(0.4);
 	double OI_OFFSET_RANGE = 0.1;
 
+
+	String[] locationArr = {"高位", "低位"};
+
+
 }

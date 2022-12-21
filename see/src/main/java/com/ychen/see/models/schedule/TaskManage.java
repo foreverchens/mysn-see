@@ -1,6 +1,6 @@
 package com.ychen.see.models.schedule;
 
-import com.ychen.see.models.schedule.server.AnalyzeService;
+import com.ychen.see.models.schedule.server.ScheduleService;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -18,11 +18,11 @@ public class TaskManage implements CommandLineRunner {
 
 
 	@Resource
-	private AnalyzeService analyzeService;
+	private ScheduleService scheduleService;
 
 	// @Scheduled(cron = "0 */5 * * * ?")
 	public void contractDataAnalyze() {
-		analyzeService.exe();
+		scheduleService.exe();
 	}
 
 
