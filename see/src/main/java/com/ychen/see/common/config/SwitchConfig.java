@@ -18,8 +18,8 @@ public class SwitchConfig {
 	private Boolean oi;
 	@Value("${see.config.accRatio:false}")
 	private Boolean accRatio;
-	@Value("${see.config.topOiRatio:true}")
+	@Value("${see.config.topOiRatio:false}")
 	private Boolean topOiRatio;
-	@Value("${see.config.kline:false}")
+	@Value("${see.config.kline:true}")
 	private Boolean kline;
 }

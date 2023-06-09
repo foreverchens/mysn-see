@@ -48,7 +48,7 @@ public class ContractOriginalDataDomain {
 	/**
 	 * 最多存储几天的数据
 	 */
-	@Value("${see.cz.storeDay:15}")
+	@Value("${see.cz.storeDay:7}")
 	private int storeDay;
 	private int queueSize;
 
@@ -211,7 +211,7 @@ public class ContractOriginalDataDomain {
 		ArrayDeque<Object> deque = get(symbol, dataType);
 		Object last = deque.getLast();
 		if (last instanceof OpenInterestStat) {
-			return ((OpenInterestStat) last).getSumOpenInterestValue();
+			return ((OpenInterestStat) last).getSumOpenInterest();
 		} else if (last instanceof CommonLongShortRatio) {
 			return ((CommonLongShortRatio) last).getLongShortRatio();
 		} else {

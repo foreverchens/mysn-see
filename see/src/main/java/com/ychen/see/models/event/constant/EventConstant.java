@@ -20,11 +20,11 @@ public interface EventConstant {
 	double LO_SH_TOP_OFFSET_RANGE = 0.05;
 
 	/**
-	 * 持仓量振幅需要大于40个点才予以分析
+	 * 持仓额振幅需要大于20个点才予以分析
 	 * 高低位点·判断范围限制在10个点之内
 	 */
-	BigDecimal OI_AMPLITUDE_THRESHOLD = BigDecimal.valueOf(0.4);
-	double OI_OFFSET_RANGE = 0.1;
+	BigDecimal OI_AMPLITUDE_THRESHOLD = BigDecimal.valueOf(0.2);
+	double OI_OFFSET_RANGE = 0.05;
 
 
 	String[] locationArr = {"高位", "低位"};

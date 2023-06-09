@@ -42,7 +42,7 @@ public class ContractOiDataStatisticFuncImpl implements ContractDataStatisticFun
 		log.info("分析{}的{}类型数据", symbol, dataType);
 		// 最近七天的持仓量数据
 		List<BigDecimal> day15OiValDataList =
-				contractOriginalDataDomain.<OpenInterestStat>listLastContractData(symbol, dataType, storeDay).getData().stream().map(OpenInterestStat::getSumOpenInterestValue).collect(Collectors.toList());
+				contractOriginalDataDomain.<OpenInterestStat>listLastContractData(symbol, dataType, storeDay).getData().stream().map(OpenInterestStat::getSumOpenInterest).collect(Collectors.toList());
 
 		// 统计三天和七天内数据
 		statisticDay3To15(oiStatisticM, day15OiValDataList);

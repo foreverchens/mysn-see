@@ -72,7 +72,10 @@ public class BullishFeatureConfiguration {
 			// 账户多空比数据列表
 			List<ChangeEventInfo> eventAccList = dataTypeToListMap.get(DataTypeConstant.accRatio);
 			rlt += sumLoShVeVal(eventAccList);
-
+			if(rlt < 3){
+				// 如果价格处于近三天及七天的低位、它的rlt将为3、如果低于该值、参考价值较低
+				return CallResult.failure(symbol+"-不存在低价事件");
+			}
 			return CallResult.success(symbol + "-价格低位符合、看涨指数:" + rlt);
 		};
 	}

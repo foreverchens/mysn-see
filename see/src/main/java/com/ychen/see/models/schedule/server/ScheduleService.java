@@ -55,9 +55,10 @@ public class ScheduleService {
 
 		for (String symbol : symbolList) {
 			List<String> analyzeRlt = analyzeService.analyze(symbol);
-			if (CollectionUtil.isNotEmpty(analyzeRlt)) {
-				log.info("rlt:" + analyzeRlt);
+			if (CollectionUtil.isEmpty(analyzeRlt)) {
+				continue;
 			}
+			log.info("rlt:" + analyzeRlt);
 			List<ChangeEventInfo> eventInfoList = eventDataDomain.listEventInfo(symbol);
 			if (!CollectionUtil.isEmpty(eventInfoList)) {
 				StringBuilder sb = new StringBuilder();

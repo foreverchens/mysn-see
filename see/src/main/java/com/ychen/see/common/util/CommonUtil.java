@@ -29,6 +29,6 @@ public class CommonUtil {
 		if (k.compareTo(num) < 1) {
 			return num.divide(k, RoundingMode.DOWN).setScale(2, RoundingMode.DOWN).toEngineeringString().concat("k");
 		}
-		return num.setScale(2,RoundingMode.DOWN).toEngineeringString();
+		return num.toEngineeringString();
 	}
 }

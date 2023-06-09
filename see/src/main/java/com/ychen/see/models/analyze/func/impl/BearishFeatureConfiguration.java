@@ -10,7 +10,6 @@ import com.ychen.see.models.event.domain.ChangeEventInfo;
 import cn.hutool.core.collection.CollectionUtil;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,7 @@ public class BearishFeatureConfiguration {
 	 * 价格持仓量双高位、
 	 * 多空比可能低位
 	 */
-	@Bean
+	// @Bean
 	public MarketFeatureFunc highOi() {
 		return (symbol, eventInfoList) -> {
 			Map<String, List<ChangeEventInfo>> dataTypeToListMap =
